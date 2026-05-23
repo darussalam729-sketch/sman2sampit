@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --blue:#1a56db;--blue-lt:#eff6ff;--blue-dk:#1e40af;
+    --green:#10b981;--green-lt:#ecfdf5;
+    --amber:#f59e0b;--amber-lt:#fffbeb;
+    --red:#ef4444;--red-lt:#fef2f2;
+    --purple:#8b5cf6;--purple-lt:#f5f3ff;
+    --teal:#0d9488;--teal-lt:#e4f6f4;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+    --gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
+    --gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+    --sidebar-w:220px;--font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --radius:12px;--shadow:0 1px 3px rgba(0,0,0,0.08);
+  }
+  body{font-family:var(--font);background:#f0f4fc;color:var(--gray-800);font-size:14px;line-height:1.5;}
+  .app{display:flex;min-height:100vh}
+
+  .sidebar{width:var(--sidebar-w);background:linear-gradient(180deg,#0e2a5c,#1a3e7a);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+  .sidebar-logo{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px}
+  .logo-icon{width:38px;height:38px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;flex-shrink:0}
+  .logo-text .app-name{font-size:13px;font-weight:700;color:white;letter-spacing:.5px}
+  .logo-text .school-name{font-size:10px;color:rgba(255,255,255,.55)}
+  .nav-section{padding:12px 10px 4px}
+  .nav-label{font-size:9px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,.35);text-transform:uppercase;padding:0 8px;margin-bottom:4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,.65);cursor:pointer;transition:all .15s;margin:1px 0;font-size:13px;font-weight:500}
+  .nav-item:hover{background:rgba(255,255,255,.08);color:white}
+  .nav-item.active{background:rgba(255,255,255,.15);color:white}
+  .nav-icon{font-size:16px;width:18px;flex-shrink:0}
+  .nav-badge{margin-left:auto;background:var(--blue);color:white;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+
+  .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+  .header{height:60px;background:white;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:50}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+  .btn-primary{background:var(--blue);color:white}
+  .btn-primary:hover{background:var(--blue-dk)}
+  .btn-outline{background:white;color:var(--gray-700);border:1px solid var(--gray-200)}
+  .btn-outline:hover{background:var(--gray-50)}
+
+  .content{padding:24px}
+
+  .tab-row{display:flex;gap:0;background:var(--gray-100);border-radius:8px;padding:3px;margin-bottom:20px;width:fit-content}
+  .tab{padding:7px 18px;font-size:13px;font-weight:500;color:var(--gray-500);border-radius:6px;cursor:pointer;transition:all .15s}
+  .tab.active{background:white;color:var(--gray-800);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+  .card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--gray-100);overflow:hidden}
+  .card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--gray-100)}
+  .card-title{font-size:14px;font-weight:600;color:var(--gray-800)}
+  .card-sub{font-size:11px;color:var(--gray-400);margin-top:2px}
+  .card-body{padding:18px}
+
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .stat-c{background:white;border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);border:1px solid var(--gray-100);cursor:pointer;transition:transform .15s}
+  .stat-c:hover{transform:translateY(-1px)}
+  .stat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px}
+  .stat-v{font-size:24px;font-weight:700;color:var(--gray-900);line-height:1}
+  .stat-l{font-size:11px;color:var(--gray-400);font-weight:500;margin-top:3px}
+
+  .layout2{display:grid;grid-template-columns:1fr 310px;gap:16px}
+
+  /* Pembinaan table */
+  .ptable{width:100%;border-collapse:collapse}
+  .ptable th{background:var(--gray-50);padding:9px 14px;text-align:left;font-weight:600;color:var(--gray-500);font-size:11px;border-bottom:1px solid var(--gray-100)}
+  .ptable td{padding:11px 14px;border-bottom:1px solid var(--gray-50);font-size:13px;color:var(--gray-700);vertical-align:top}
+  .ptable tr:last-child td{border-bottom:none}
+  .ptable tr:hover td{background:var(--gray-50)}
+
+  .poin-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700}
+  .p-low{background:var(--amber-lt);color:#d97706}
+  .p-mid{background:#fff1f2;color:#e11d48}
+  .p-high{background:var(--red-lt);color:#dc2626}
+
+  .kat-badge{display:inline-flex;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600}
+  .k-sikap{background:var(--amber-lt);color:#92400e}
+  .k-absen{background:var(--purple-lt);color:#6d28d9}
+  .k-aturan{background:var(--red-lt);color:#b91c1c}
+  .k-akademik{background:var(--blue-lt);color:#1e40af}
+
+  .aksi-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:none;cursor:pointer;margin-right:4px}
+  .aksi-detail{background:var(--blue-lt);color:var(--blue)}
+  .aksi-surat{background:var(--amber-lt);color:#d97706}
+
+  /* Form pembinaan */
+  .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+  label{font-size:12px;font-weight:600;color:var(--gray-600)}
+  .form-ctrl{padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--gray-800);outline:none;background:white;transition:border-color .15s}
+  .form-ctrl:focus{border-color:var(--blue)}
+  textarea.form-ctrl{resize:vertical;min-height:70px}
+
+  /* Siswa card di panel kanan */
+  .siswa-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-50);cursor:pointer}
+  .siswa-item:last-child{border-bottom:none}
+  .siswa-item:hover .siswa-name{color:var(--blue)}
+  .s-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+  .siswa-name{font-size:13px;font-weight:500;color:var(--gray-800)}
+  .siswa-kelas{font-size:11px;color:var(--gray-400)}
+  .poin-ring{margin-left:auto;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+  /* Bar chart mini */
+  .bar-h-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .bar-h-label{font-size:11px;color:var(--gray-500);width:80px;flex-shrink:0}
+  .bar-h-track{flex:1;height:7px;background:var(--gray-100);border-radius:99px;overflow:hidden}
+  .bar-h-fill{height:100%;border-radius:99px}
+  .bar-h-val{font-size:11px;font-weight:600;color:var(--gray-700);width:24px;text-align:right}
+
+  /* Layanan BK card */
+  .lbk-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-50);cursor:pointer}
+  .lbk-item:last-child{border-bottom:none}
+  .lbk-item:hover{opacity:.85}
+  .lbk-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .lbk-info{flex:1}
+  .lbk-nama{font-size:13px;font-weight:600;color:var(--gray-800)}
+  .lbk-detail{font-size:11px;color:var(--gray-400);margin-top:2px}
+  .lbk-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .lbk-tgl{font-size:10px;color:var(--gray-400)}
+  .lbk-type{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">
+        <div class="app-name">SMART</div>
+        <div class="school-name">SMAN 2 SAMPIT</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-section">
+        <div class="nav-label">Utama</div>
+        <div class="nav-item"><span class="nav-icon">⊞</span> Dashboard</div>
+        <div class="nav-item"><span class="nav-icon">📅</span> Jadwal</div>
+        <div class="nav-item"><span class="nav-icon">📓</span> Jurnal Guru</div>
+        <div class="nav-item"><span class="nav-icon">✅</span> Presensi</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">KBM & Izin</div>
+        <div class="nav-item"><span class="nav-icon">📊</span> Rekap KBM</div>
+        <div class="nav-item"><span class="nav-icon">📝</span> Izin Siswa</div>
+        <div class="nav-item"><span class="nav-icon">🗂️</span> Surat Izin</div>
+        <div class="nav-icon"><span class="nav-icon"></span></div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Layanan Siswa</div>
+        <div class="nav-item active"><span class="nav-icon">💙</span> Layanan BK</div>
+        <div class="nav-item"><span class="nav-icon">⚠️</span> Pembinaan BK</div>
+        <div class="nav-item"><span class="nav-icon">👩‍🏫</span> Pembinaan Wali</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Laporan</div>
+        <div class="nav-item"><span class="nav-icon">📈</span> Laporan</div>
+        <div class="nav-item"><span class="nav-icon">⚙️</span> Pengaturan</div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div style="flex:1">
+        <div style="font-size:16px;font-weight:600;color:var(--gray-800)">Layanan BK & Pembinaan Siswa</div>
+        <div style="font-size:11px;color:var(--gray-400)">Guru BK: Ibu Nuraini Hasanah, S.Pd · SMAN 2 Sampit</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline">📥 Laporan Bulanan</button>
+        <button class="btn btn-primary" onclick="showAddModal()">➕ Tambah Catatan</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- Stat cards -->
+      <div class="stats-row">
+        <div class="stat-c">
+          <div class="stat-icon" style="background:var(--blue-lt)">💬</div>
+          <div class="stat-v" style="color:var(--blue)">48</div>
+          <div class="stat-l">Konseling Individu</div>
+        </div>
+        <div class="stat-c">
+          <div class="stat-icon" style="background:var(--teal-lt)">👥</div>
+          <div class="stat-v" style="color:var(--teal)">12</div>
+          <div class="stat-l">Konseling Kelompok</div>
+        </div>
+        <div class="stat-c">
+          <div class="stat-icon" style="background:var(--amber-lt)">⚠️</div>
+          <div class="stat-v" style="color:var(--amber)">31</div>
+          <div class="stat-l">Kasus Pembinaan</div>
+        </div>
+        <div class="stat-c">
+          <div class="stat-icon" style="background:var(--red-lt)">🔴</div>
+          <div class="stat-v" style="color:var(--red)">5</div>
+          <div class="stat-l">Surat Peringatan</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-row">
+        <div class="tab active" onclick="switchTab(this,'pembinaan')">⚠️ Pembinaan</div>
+        <div class="tab" onclick="switchTab(this,'layanan')">💬 Layanan BK</div>
+        <div class="tab" onclick="switchTab(this,'grafik')">📊 Grafik</div>
+      </div>
+
+      <!-- PEMBINAAN TAB -->
+      <div id="tab-pembinaan">
+        <div class="layout2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Rekap Pembinaan Siswa</div>
+                <div class="card-sub">Semester Genap 2025/2026 · 31 kasus tercatat</div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <select style="padding:6px 10px;border:1px solid var(--gray-200);border-radius:7px;font-size:12px;font-family:var(--font);outline:none;background:white">
+                  <option>Semua Kelas</option>
+                  <option>XII IPA</option>
+                  <option>XI IPS</option>
+                  <option>X MIPA</option>
+                </select>
+                <button class="btn btn-outline" style="font-size:12px;padding:6px 12px">🖨️ Cetak</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="ptable">
+                <thead>
+                  <tr>
+                    <th>Siswa</th>
+                    <th>Kategori</th>
+                    <th>Pelanggaran</th>
+                    <th>Tanggal</th>
+                    <th>Poin</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><div style="font-weight:600;color:var(--gray-800)">Siti Rahayu</div><div style="font-size:11px;color:var(--gray-400)">XII IPA 2</div></td>
+                    <td><span class="kat-badge k-absen">Absensi</span></td>
+                    <td style="max-width:160px;font-size:12px">Terlambat 3x dalam sebulan</td>
+                    <td style="font-size:12px;white-space:nowrap">22 Mei 2026</td>
+                    <td><span class="poin-badge p-low">25 poin</span></td>
+                    <td><span style="font-size:11px;color:#d97706;background:var(--amber-lt);padding:3px 8px;border-radius:6px;font-weight:600">Proses</span></td>
+                    <td><button class="aksi-btn aksi-detail">Detail</button><button class="aksi-btn aksi-surat">Surat</button></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:600;color:var(--gray-800)">Doni Prasetyo</div><div style="font-size:11px;color:var(--gray-400)">XI IPS 3</div></td>
+                    <td><span class="kat-badge k-aturan">Tata Tertib</span></td>
+                    <td style="max-width:160px;font-size:12px">Tidak menggunakan seragam lengkap</td>
+                    <td style="font-size:12px;white-space:nowrap">20 Mei 2026</td>
+                    <td><span class="poin-badge p-low">15 poin</span></td>
+                    <td><span style="font-size:11px;color:#059669;background:var(--green-lt);padding:3px 8px;border-radius:6px;font-weight:600">Selesai</span></td>
+                    <td><button class="aksi-btn aksi-detail">Detail</button></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:600;color:var(--gray-800)">Rizal Maulana</div><div style="font-size:11px;color:var(--gray-400)">XII IPA 1</div></td>
+                    <td><span class="kat-badge k-sikap">Sikap</span></td>
+                    <td style="max-width:160px;font-size:12px">Membuat keributan di kelas</td>
+                    <td style="font-size:12px;white-space:nowrap">18 Mei 2026</td>
+                    <td><span class="poin-badge p-mid">40 poin</span></td>
+                    <td><span style="font-size:11px;color:#dc2626;background:var(--red-lt);padding:3px 8px;border-radius:6px;font-weight:600">SP-1</span></td>
+                    <td><button class="aksi-btn aksi-detail">Detail</button><button class="aksi-btn aksi-surat">Surat</button></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:600;color:var(--gray-800)">Anisa Putri</div><div style="font-size:11px;color:var(--gray-400)">X MIPA 4</div></td>
+                    <td><span class="kat-badge k-akademik">Akademik</span></td>
+                    <td style="max-width:160px;font-size:12px">Tidak mengumpulkan tugas 2x</td>
+                    <td style="font-size:12px;white-space:nowrap">15 Mei 2026</td>
+                    <td><span class="poin-badge p-low">20 poin</span></td>
+                    <td><span style="font-size:11px;color:#059669;background:var(--green-lt);padding:3px 8px;border-radius:6px;font-weight:600">Selesai</span></td>
+                    <td><button class="aksi-btn aksi-detail">Detail</button></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:600;color:var(--gray-800)">Bagas Eka Putra</div><div style="font-size:11px;color:var(--gray-400)">XI IPA 2</div></td>
+                    <td><span class="kat-badge k-aturan">Tata Tertib</span></td>
+                    <td style="max-width:160px;font-size:12px">HP di kelas tanpa izin guru</td>
+                    <td style="font-size:12px;white-space:nowrap">12 Mei 2026</td>
+                    <td><span class="poin-badge p-high">50 poin</span></td>
+                    <td><span style="font-size:11px;color:#dc2626;background:var(--red-lt);padding:3px 8px;border-radius:6px;font-weight:600">SP-2</span></td>
+                    <td><button class="aksi-btn aksi-detail">Detail</button><button class="aksi-btn aksi-surat">Surat</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right: siswa pantauan + form -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <!-- Siswa Pantauan -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Siswa dalam Pantauan</div>
+                <span style="background:var(--red-lt);color:#dc2626;font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px">8 siswa</span>
+              </div>
+              <div class="card-body" style="padding:10px 18px">
+                ${[
+                  {init:'SR',kelas:'XII IPA 2',name:'Siti Rahayu',poin:25,c:'#dbeafe',tc:'#1d4ed8'},
+                  {init:'RM',kelas:'XII IPA 1',name:'Rizal Maulana',poin:40,c:'#fce7f3',tc:'#9d174d'},
+                  {init:'BP',kelas:'XI IPA 2',name:'Bagas Eka Putra',poin:50,c:'#fef9c3',tc:'#713f12'},
+                  {init:'LH',kelas:'X IPS 1',name:'Lutfi Haikal',poin:35,c:'#f3e8ff',tc:'#6b21a8'},
+                  {init:'FK',kelas:'XI MIPA 3',name:'Fadli Kurnia',poin:60,c:'#fee2e2',tc:'#991b1b'},
+                ].map(s=>{
+                  const col = s.poin>=50?'#ef4444':s.poin>=35?'#f59e0b':'#10b981';
+                  return `
+                  <div class="siswa-item">
+                    <div class="s-av" style="background:${s.c};color:${s.tc}">${s.init}</div>
+                    <div style="flex:1">
+                      <div class="siswa-name">${s.name}</div>
+                      <div class="siswa-kelas">${s.kelas}</div>
+                    </div>
+                    <div class="poin-ring" style="background:${col}22;color:${col};border:2px solid ${col}44">${s.poin}</div>
+                  </div>`;
+                }).join('')}
+                <div style="margin-top:8px;font-size:11px;color:var(--gray-400);text-align:center">Lingkaran = total poin pelanggaran</div>
+              </div>
+            </div>
+
+            <!-- Quick input pembinaan -->
+            <div class="card">
+              <div class="card-header"><div class="card-title">Catat Pembinaan Baru</div></div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label>Nama Siswa</label>
+                  <input class="form-ctrl" type="text" placeholder="Cari nama siswa...">
+                </div>
+                <div class="form-group">
+                  <label>Jenis Pelanggaran</label>
+                  <select class="form-ctrl">
+                    <option>Keterlambatan</option>
+                    <option>Tidak Berseragam</option>
+                    <option>Keributan di Kelas</option>
+                    <option>Tidak Mengerjakan Tugas</option>
+                    <option>Penggunaan HP</option>
+                    <option>Lainnya...</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Bentuk Pembinaan</label>
+                  <select class="form-ctrl">
+                    <option>Teguran lisan</option>
+                    <option>Konseling individu</option>
+                    <option>Surat peringatan</option>
+                    <option>Panggil orang tua</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label>Catatan Tindak Lanjut</label>
+                  <textarea class="form-ctrl" placeholder="Hasil pembinaan dan rencana tindak lanjut..."></textarea>
+                </div>
+                <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px" onclick="alert('✅ Catatan pembinaan berhasil disimpan!')">💾 Simpan Pembinaan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYANAN BK TAB -->
+      <div id="tab-layanan" style="display:none">
+        <div class="layout2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Riwayat Layanan BK</div>
+                <div class="card-sub">60 layanan semester ini</div>
+              </div>
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px">➕ Catat Layanan</button>
+            </div>
+            <div class="card-body" style="padding:8px 18px">
+              ${[
+                {icon:'💬',bg:'#eff6ff',nama:'Ahmad Rizki',kelas:'XII IPA 1',detail:'Konseling karir dan pilihan jurusan kuliah',tipe:'Konseling Individu',tipeCls:'background:#eff6ff;color:#1d4ed8',tgl:'22 Mei'},
+                {icon:'👥',bg:'#e4f6f4',nama:'Kelompok XI IPS 2',kelas:'5 siswa',detail:'Manajemen stres dan motivasi belajar',tipe:'Konseling Kelompok',tipeCls:'background:#e4f6f4;color:#0d9488',tgl:'21 Mei'},
+                {icon:'👨‍👩‍👧',bg:'#fef9c3',nama:'Orang Tua Bagas EP',kelas:'XI IPA 2',detail:'Konsultasi perilaku dan prestasi akademik',tipe:'Konsultasi Orang Tua',tipeCls:'background:#fffbeb;color:#d97706',tgl:'20 Mei'},
+                {icon:'🏫',bg:'#f5f3ff',nama:'Kelas X MIPA 1',kelas:'32 siswa',detail:'Bimbingan klasikal: adaptasi lingkungan baru',tipe:'Bimbingan Klasikal',tipeCls:'background:#f5f3ff;color:#7c3aed',tgl:'19 Mei'},
+                {icon:'💬',bg:'#eff6ff',nama:'Nur Safitri',kelas:'XII IPA 1',detail:'Konseling permasalahan hubungan sosial',tipe:'Konseling Individu',tipeCls:'background:#eff6ff;color:#1d4ed8',tgl:'18 Mei'},
+                {icon:'💬',bg:'#eff6ff',nama:'Lutfi Haikal',kelas:'X IPS 1',detail:'Motivasi belajar dan minat vokasional',tipe:'Konseling Individu',tipeCls:'background:#eff6ff;color:#1d4ed8',tgl:'15 Mei'},
+              ].map(l=>`
+                <div class="lbk-item">
+                  <div class="lbk-icon" style="background:${l.bg}">${l.icon}</div>
+                  <div class="lbk-info">
+                    <div class="lbk-nama">${l.nama} <span style="font-weight:400;color:var(--gray-400)">· ${l.kelas}</span></div>
+                    <div class="lbk-detail">${l.detail}</div>
+                  </div>
+                  <div class="lbk-right">
+                    <span class="lbk-type" style="${l.tipeCls}">${l.tipe}</span>
+                    <span class="lbk-tgl">${l.tgl} 2026</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Jadwal Layanan BK</div></div>
+              <div class="card-body" style="padding:10px 18px">
+                ${[
+                  {jam:'08.00',nama:'Ahmad Rizki',jenis:'Konseling Individu',c:'var(--blue-lt)',tc:'var(--blue)'},
+                  {jam:'09.30',nama:'Nur Laila',jenis:'Konseling Individu',c:'var(--teal-lt)',tc:'var(--teal)'},
+                  {jam:'10.30',nama:'Kelas XI IPS 1',jenis:'Bimbingan Klasikal',c:'var(--purple-lt)',tc:'var(--purple)'},
+                  {jam:'13.00',nama:'Orang Tua Doni P.',jenis:'Konsultasi Orang Tua',c:'var(--amber-lt)',tc:'var(--amber)'},
+                ].map(j=>`
+                  <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-50)">
+                    <div style="font-size:12px;font-weight:700;color:var(--blue);width:40px;flex-shrink:0;margin-top:2px">${j.jam}</div>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:500;color:var(--gray-800)">${j.nama}</div>
+                      <div style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px;display:inline-block;margin-top:3px;background:${j.c};color:${j.tc}">${j.jenis}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Statistik Layanan</div></div>
+              <div class="card-body">
+                <div style="font-size:11px;font-weight:600;color:var(--gray-400);margin-bottom:10px">JENIS LAYANAN BULAN INI</div>
+                <div class="bar-h-row"><span class="bar-h-label">Kons. Individu</span><div class="bar-h-track"><div class="bar-h-fill" style="width:75%;background:var(--blue)"></div></div><span class="bar-h-val">24</span></div>
+                <div class="bar-h-row"><span class="bar-h-label">Kons. Kelompok</span><div class="bar-h-track"><div class="bar-h-fill" style="width:25%;background:var(--teal)"></div></div><span class="bar-h-val">8</span></div>
+                <div class="bar-h-row"><span class="bar-h-label">Bimb. Klasikal</span><div class="bar-h-track"><div class="bar-h-fill" style="width:31%;background:var(--purple)"></div></div><span class="bar-h-val">10</span></div>
+                <div class="bar-h-row"><span class="bar-h-label">Kons. Ortu</span><div class="bar-h-track"><div class="bar-h-fill" style="width:19%;background:var(--amber)"></div></div><span class="bar-h-val">6</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRAFIK TAB -->
+      <div id="tab-grafik" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Tren Pelanggaran Bulanan</div></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:flex-end;gap:10px;height:130px;padding:0 4px">
+                ${[['Jan',6,'#93c5fd'],['Feb',9,'#3b82f6'],['Mar',12,'#1d4ed8'],['Apr',7,'#3b82f6'],['Mei',14,'#1e40af'],['Jun',0,'#e5e7eb']].map(([b,v,c])=>`
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                    <span style="font-size:10px;font-weight:600;color:var(--gray-600)">${v||''}</span>
+                    <div style="width:100%;height:${Math.max(v*8,4)}px;background:${c};border-radius:4px 4px 0 0;min-height:4px"></div>
+                    <span style="font-size:10px;color:var(--gray-400)">${b}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Distribusi Kategori Pelanggaran</div></div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                ${[
+                  {lbl:'Tata Tertib',val:12,pct:39,c:'#ef4444'},
+                  {lbl:'Absensi',val:9,pct:29,c:'#8b5cf6'},
+                  {lbl:'Sikap',val:7,pct:23,c:'#f59e0b'},
+                  {lbl:'Akademik',val:3,pct:10,c:'#3b82f6'},
+                ].map(k=>`
+                  <div style="background:var(--gray-50);border-radius:10px;padding:14px;text-align:center">
+                    <div style="font-size:22px;font-weight:700;color:${k.c}">${k.val}</div>
+                    <div style="font-size:11px;color:var(--gray-500);margin-top:2px">${k.lbl}</div>
+                    <div style="font-size:10px;font-weight:600;color:${k.c};margin-top:4px">${k.pct}%</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header">
+              <div class="card-title">Siswa dengan Poin Tertinggi</div>
+              <span style="font-size:12px;color:var(--gray-400)">Ambang batas SP: 40 poin · Skorsing: 75 poin</span>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                ${[
+                  {name:'Fadli Kurnia',kelas:'XI MIPA 3',poin:60,max:100,c:'#ef4444'},
+                  {name:'Bagas Eka Putra',kelas:'XI IPA 2',poin:50,max:100,c:'#f59e0b'},
+                  {name:'Rizal Maulana',kelas:'XII IPA 1',poin:40,max:100,c:'#f59e0b'},
+                  {name:'Lutfi Haikal',kelas:'X IPS 1',poin:35,max:100,c:'#3b82f6'},
+                  {name:'Siti Rahayu',kelas:'XII IPA 2',poin:25,max:100,c:'#10b981'},
+                ].map(s=>`
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:130px;font-size:13px;font-weight:500;color:var(--gray-800);white-space:nowrap">${s.name}</div>
+                    <div style="font-size:11px;color:var(--gray-400);width:70px">${s.kelas}</div>
+                    <div style="flex:1;height:8px;background:var(--gray-100);border-radius:99px;overflow:hidden">
+                      <div style="height:100%;width:${s.poin}%;background:${s.c};border-radius:99px;transition:width .4s"></div>
+                    </div>
+                    <div style="font-size:13px;font-weight:700;color:${s.c};width:50px;text-align:right">${s.poin} poin</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function switchTab(el, id) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['pembinaan','layanan','grafik'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===id?'block':'none';
+  });
+}
+</script>
+</body>
+</html>
