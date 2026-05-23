@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1a56db; --blue-lt: #eff6ff; --blue-dk: #1e40af;
+    --green: #10b981; --green-lt: #ecfdf5;
+    --amber: #f59e0b; --amber-lt: #fffbeb;
+    --red: #ef4444; --red-lt: #fef2f2;
+    --purple: #8b5cf6; --purple-lt: #f5f3ff;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+    --gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
+    --gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+    --sidebar-w:220px; --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --radius:12px; --shadow:0 1px 3px rgba(0,0,0,0.08);
+  }
+  body { font-family:var(--font); background:#f0f4fc; color:var(--gray-800); font-size:14px; line-height:1.5; }
+  .app { display:flex; min-height:100vh; }
+
+  .sidebar {
+    width:var(--sidebar-w); background:linear-gradient(180deg,#0e2a5c,#1a3e7a);
+    display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:100; overflow-y:auto;
+  }
+  .sidebar-logo { padding:20px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:10px; }
+  .logo-icon { width:38px;height:38px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;flex-shrink:0; }
+  .logo-text .app-name { font-size:13px;font-weight:700;color:white;letter-spacing:0.5px; }
+  .logo-text .school-name { font-size:10px;color:rgba(255,255,255,0.55); }
+  .nav-section { padding:12px 10px 4px; }
+  .nav-label { font-size:9px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.35);text-transform:uppercase;padding:0 8px;margin-bottom:4px; }
+  .nav-item { display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;margin:1px 0;font-size:13px;font-weight:500; }
+  .nav-item:hover { background:rgba(255,255,255,0.08);color:white; }
+  .nav-item.active { background:rgba(255,255,255,0.15);color:white; }
+  .nav-icon { font-size:16px;width:18px;flex-shrink:0; }
+  .nav-badge { margin-left:auto;background:var(--blue);color:white;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px; }
+
+  .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+  .header { height:60px;background:white;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:50; }
+  .header-title { font-size:16px;font-weight:600;color:var(--gray-800);flex:1; }
+  .btn { display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s; }
+  .btn-primary { background:var(--blue);color:white; }
+  .btn-primary:hover { background:var(--blue-dk); }
+  .btn-outline { background:white;color:var(--gray-700);border:1px solid var(--gray-200); }
+  .btn-outline:hover { background:var(--gray-50); }
+  .btn-green { background:var(--green);color:white; }
+
+  .content { padding:24px; }
+
+  /* Top controls */
+  .controls { display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap; }
+  .select-input {
+    padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;
+    font-family:var(--font);background:white;color:var(--gray-700);cursor:pointer;outline:none;
+  }
+  .select-input:focus { border-color:var(--blue); }
+
+  /* Stat mini cards */
+  .mini-stats { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px; }
+  .mini-card { background:white;border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);border:1px solid var(--gray-100);text-align:center;cursor:pointer;transition:transform 0.15s; }
+  .mini-card:hover { transform:translateY(-1px); }
+  .mini-val { font-size:22px;font-weight:700;line-height:1; }
+  .mini-lbl { font-size:11px;color:var(--gray-400);font-weight:500;margin-top:3px; }
+
+  /* Main grid */
+  .main-grid { display:grid;grid-template-columns:1fr 340px;gap:16px; }
+
+  .card { background:white;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--gray-100);overflow:hidden; }
+  .card-header { display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--gray-100); }
+  .card-title { font-size:14px;font-weight:600;color:var(--gray-800); }
+  .card-sub { font-size:11px;color:var(--gray-400);margin-top:2px; }
+  .card-body { padding:18px; }
+
+  /* Student table */
+  .student-table { width:100%;border-collapse:collapse; }
+  .student-table th { background:var(--gray-50);padding:9px 12px;text-align:left;font-weight:600;color:var(--gray-500);font-size:11px;border-bottom:1px solid var(--gray-100); }
+  .student-table td { padding:10px 12px;border-bottom:1px solid var(--gray-50);color:var(--gray-700);font-size:13px; }
+  .student-table tr:last-child td { border-bottom:none; }
+  .student-table tr:hover td { background:var(--gray-50); }
+
+  .no-badge { display:inline-block;width:24px;height:24px;background:var(--gray-100);border-radius:6px;text-align:center;line-height:24px;font-size:11px;font-weight:600;color:var(--gray-500); }
+
+  /* Radio buttons for status */
+  .status-radios { display:flex;gap:4px; }
+  .status-btn {
+    padding:4px 9px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
+    border:1.5px solid transparent;transition:all 0.12s;user-select:none;
+  }
+  .status-btn.h  { border-color:#10b981;color:#059669; }
+  .status-btn.h.sel, .status-btn.h:hover  { background:var(--green-lt); }
+  .status-btn.s  { border-color:#f59e0b;color:#d97706; }
+  .status-btn.s.sel, .status-btn.s:hover  { background:var(--amber-lt); }
+  .status-btn.i  { border-color:#3b82f6;color:#1d4ed8; }
+  .status-btn.i.sel, .status-btn.i:hover  { background:var(--blue-lt); }
+  .status-btn.a  { border-color:#ef4444;color:#dc2626; }
+  .status-btn.a.sel, .status-btn.a:hover  { background:var(--red-lt); }
+  .status-btn.t  { border-color:#8b5cf6;color:#7c3aed; }
+  .status-btn.t.sel, .status-btn.t:hover  { background:var(--purple-lt); }
+
+  /* QR section */
+  .qr-box {
+    border:2px dashed var(--gray-200);border-radius:12px;padding:24px;text-align:center;margin-bottom:16px;background:var(--gray-50);
+  }
+  .qr-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:3px;width:140px;height:140px;margin:0 auto 12px; }
+  .qr-cell { border-radius:2px; }
+
+  /* Izin pending */
+  .izin-item { display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-50); }
+  .izin-item:last-child { border-bottom:none; }
+  .izin-avatar { width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0; }
+  .izin-info { flex:1; }
+  .izin-name { font-size:13px;font-weight:500;color:var(--gray-800); }
+  .izin-detail { font-size:11px;color:var(--gray-400);margin-top:1px; }
+  .izin-actions { display:flex;gap:6px;margin-top:6px; }
+  .btn-approve { padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:var(--green-lt);color:#059669;border:none;cursor:pointer; }
+  .btn-reject  { padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:var(--red-lt);color:#dc2626;border:none;cursor:pointer; }
+
+  /* Pie chart simple */
+  .pie-legend { display:flex;flex-direction:column;gap:8px;margin-top:12px; }
+  .pie-row { display:flex;align-items:center;gap:8px; }
+  .pie-dot { width:10px;height:10px;border-radius:3px;flex-shrink:0; }
+  .pie-label { font-size:12px;color:var(--gray-600);flex:1; }
+  .pie-val { font-size:12px;font-weight:600;color:var(--gray-800); }
+  .pie-bar-wrap { height:5px;background:var(--gray-100);border-radius:99px;overflow:hidden;margin-top:3px; }
+  .pie-bar-fill { height:100%;border-radius:99px; }
+
+  .tab-row { display:flex;gap:0;background:var(--gray-100);border-radius:8px;padding:3px;margin-bottom:16px; }
+  .tab { flex:1;text-align:center;padding:6px 10px;font-size:12px;font-weight:500;color:var(--gray-500);border-radius:6px;cursor:pointer;transition:all 0.15s; }
+  .tab.active { background:white;color:var(--gray-800);box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+
+  .search-bar {
+    display:flex;align-items:center;gap:8px;background:var(--gray-50);border:1px solid var(--gray-200);
+    border-radius:8px;padding:7px 12px;font-size:13px;color:var(--gray-500);
+    flex:1;min-width:200px;
+  }
+  .search-bar input { border:none;background:transparent;outline:none;font-size:13px;font-family:var(--font);color:var(--gray-700);width:100%; }
+  .search-bar input::placeholder { color:var(--gray-400); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">
+        <div class="app-name">SMART</div>
+        <div class="school-name">SMAN 2 SAMPIT</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-section">
+        <div class="nav-label">Utama</div>
+        <div class="nav-item"><span class="nav-icon">⊞</span> Dashboard</div>
+        <div class="nav-item"><span class="nav-icon">📅</span> Jadwal</div>
+        <div class="nav-item"><span class="nav-icon">📓</span> Jurnal Guru</div>
+        <div class="nav-item active"><span class="nav-icon">✅</span> Presensi <span class="nav-badge">Baru</span></div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">KBM & Izin</div>
+        <div class="nav-item"><span class="nav-icon">📊</span> Rekap KBM</div>
+        <div class="nav-item"><span class="nav-icon">📝</span> Izin Siswa</div>
+        <div class="nav-item"><span class="nav-icon">🗂️</span> Surat Izin</div>
+        <div class="nav-item"><span class="nav-icon">⏱️</span> Alokasi Waktu</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Layanan Siswa</div>
+        <div class="nav-item"><span class="nav-icon">💙</span> Layanan BK</div>
+        <div class="nav-item"><span class="nav-icon">⚠️</span> Pembinaan BK</div>
+        <div class="nav-item"><span class="nav-icon">👩‍🏫</span> Pembinaan Wali</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Laporan</div>
+        <div class="nav-item"><span class="nav-icon">📈</span> Laporan</div>
+        <div class="nav-item"><span class="nav-icon">⚙️</span> Pengaturan</div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div style="flex:1">
+        <div class="header-title">Presensi Murid</div>
+        <div style="font-size:11px;color:var(--gray-400)">Jumat, 22 Mei 2026 · Semester Genap 2025/2026</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-outline">📥 Export Excel</button>
+        <button class="btn btn-outline">🖨️ Cetak</button>
+        <button class="btn btn-primary">💾 Simpan Presensi</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- Mini stats -->
+      <div class="mini-stats">
+        <div class="mini-card" onclick="filterStatus('hadir')">
+          <div class="mini-val" style="color:#10b981">1.198</div>
+          <div class="mini-lbl">✅ Hadir</div>
+        </div>
+        <div class="mini-card" onclick="filterStatus('sakit')">
+          <div class="mini-val" style="color:#f59e0b">18</div>
+          <div class="mini-lbl">🤒 Sakit</div>
+        </div>
+        <div class="mini-card" onclick="filterStatus('izin')">
+          <div class="mini-val" style="color:#3b82f6">15</div>
+          <div class="mini-lbl">📋 Izin</div>
+        </div>
+        <div class="mini-card" onclick="filterStatus('alpha')">
+          <div class="mini-val" style="color:#ef4444">13</div>
+          <div class="mini-lbl">❌ Alpha</div>
+        </div>
+        <div class="mini-card" onclick="filterStatus('terlambat')">
+          <div class="mini-val" style="color:#8b5cf6">23</div>
+          <div class="mini-lbl">⏰ Terlambat</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="search-bar">
+          <span>🔍</span>
+          <input type="text" placeholder="Cari nama siswa..." id="search-input" oninput="filterSearch(this.value)">
+        </div>
+        <select class="select-input" id="filter-kelas" onchange="renderTable()">
+          <option value="">Semua Kelas</option>
+          <option value="XII IPA 1" selected>XII IPA 1</option>
+          <option value="XII IPA 2">XII IPA 2</option>
+          <option value="XII IPA 3">XII IPA 3</option>
+          <option value="XI IPA 1">XI IPA 1</option>
+          <option value="XI IPS 2">XI IPS 2</option>
+          <option value="X MIPA 1">X MIPA 1</option>
+        </select>
+        <select class="select-input">
+          <option>Jumat, 22 Mei 2026</option>
+          <option>Kamis, 21 Mei 2026</option>
+          <option>Rabu, 20 Mei 2026</option>
+        </select>
+        <button class="btn btn-outline" onclick="setAllHadir()">✅ Tandai Semua Hadir</button>
+      </div>
+
+      <div class="main-grid">
+        <!-- Left: student table -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Daftar Siswa — XII IPA 1</div>
+              <div class="card-sub">36 siswa · Wali Kelas: Ibu Dewi Rahayu, S.Pd</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px">📷 Scan QR</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="student-table" id="student-table">
+              <thead>
+                <tr>
+                  <th width="36">No</th>
+                  <th>Nama Siswa</th>
+                  <th>NISN</th>
+                  <th>Status Kehadiran</th>
+                  <th>Catatan</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right panel -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- QR Code -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">QR Presensi</div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:2px">Kelas XII IPA 1</div>
+            </div>
+            <div class="card-body">
+              <div class="qr-box">
+                <svg width="140" height="140" viewBox="0 0 140 140" style="display:block;margin:0 auto 10px">
+                  <!-- QR pattern simulation -->
+                  <rect width="140" height="140" fill="white"/>
+                  <!-- Corner marks -->
+                  <rect x="8" y="8" width="36" height="36" rx="4" fill="none" stroke="#1a56db" stroke-width="3"/>
+                  <rect x="14" y="14" width="24" height="24" rx="2" fill="#1a56db"/>
+                  <rect x="96" y="8" width="36" height="36" rx="4" fill="none" stroke="#1a56db" stroke-width="3"/>
+                  <rect x="102" y="14" width="24" height="24" rx="2" fill="#1a56db"/>
+                  <rect x="8" y="96" width="36" height="36" rx="4" fill="none" stroke="#1a56db" stroke-width="3"/>
+                  <rect x="14" y="102" width="24" height="24" rx="2" fill="#1a56db"/>
+                  <!-- Data dots -->
+                  <rect x="54" y="8" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="64" y="8" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="74" y="8" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="54" y="18" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="74" y="18" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="64" y="28" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="8" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="18" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="28" y="64" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="8" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="54" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="64" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="74" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="84" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="54" y="64" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="84" y="64" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="54" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="64" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="74" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="54" y="84" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="74" y="84" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="84" y="84" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="96" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="106" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="116" y="64" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="126" y="54" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="96" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="116" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="126" y="74" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="96" y="96" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="106" y="106" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="116" y="96" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="126" y="106" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="96" y="116" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="116" y="116" width="7" height="7" rx="1" fill="#1a56db"/>
+                  <rect x="126" y="126" width="7" height="7" rx="1" fill="#1a56db"/>
+                </svg>
+                <div style="font-size:12px;font-weight:600;color:var(--gray-700)">XII IPA 1 · 22 Mei 2026</div>
+                <div style="font-size:10px;color:var(--gray-400);margin-top:3px">Scan untuk presensi mandiri</div>
+              </div>
+              <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:12px">🔄 Generate QR Baru</button>
+            </div>
+          </div>
+
+          <!-- Izin Pending -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Izin Menunggu</div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="background:#fef2f2;color:#dc2626;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px">3 pending</span>
+              </div>
+            </div>
+            <div class="card-body" style="padding:10px 18px">
+              <div class="izin-item">
+                <div class="izin-avatar" style="background:#dbeafe;color:#1d4ed8">AR</div>
+                <div class="izin-info">
+                  <div class="izin-name">Ahmad Rizki</div>
+                  <div class="izin-detail">XII IPA 1 · Izin pulang awal · Sakit kepala</div>
+                  <div class="izin-actions">
+                    <button class="btn-approve" onclick="approveIzin(this)">✓ Setujui</button>
+                    <button class="btn-reject"  onclick="rejectIzin(this)">✗ Tolak</button>
+                  </div>
+                </div>
+              </div>
+              <div class="izin-item">
+                <div class="izin-avatar" style="background:#dcfce7;color:#166534">NS</div>
+                <div class="izin-info">
+                  <div class="izin-name">Nur Safitri</div>
+                  <div class="izin-detail">XII IPA 1 · Izin keluar · Keperluan keluarga</div>
+                  <div class="izin-actions">
+                    <button class="btn-approve" onclick="approveIzin(this)">✓ Setujui</button>
+                    <button class="btn-reject"  onclick="rejectIzin(this)">✗ Tolak</button>
+                  </div>
+                </div>
+              </div>
+              <div class="izin-item">
+                <div class="izin-avatar" style="background:#fef9c3;color:#713f12">BW</div>
+                <div class="izin-info">
+                  <div class="izin-name">Bagus Wijaya</div>
+                  <div class="izin-detail">XII IPA 1 · Terlambat · Macet di jalan</div>
+                  <div class="izin-actions">
+                    <button class="btn-approve" onclick="approveIzin(this)">✓ Setujui</button>
+                    <button class="btn-reject"  onclick="rejectIzin(this)">✗ Tolak</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rekap pie -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Rekap Kehadiran Kelas</div></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+                <svg width="100" height="100" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f3f4f6" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="88.5 11.5" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="5.6 94.4" stroke-dashoffset="-63.5" transform="rotate(-90 18 18)"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="3.9 96.1" stroke-dashoffset="-69.1" transform="rotate(-90 18 18)"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="1.6 98.4" stroke-dashoffset="-73" transform="rotate(-90 18 18)"/>
+                  <text x="18" y="21" text-anchor="middle" font-size="7" font-weight="600" fill="#1f2937">92%</text>
+                </svg>
+              </div>
+              <div class="pie-legend">
+                <div>
+                  <div class="pie-row"><span class="pie-dot" style="background:#10b981"></span><span class="pie-label">Hadir</span><span class="pie-val">33</span></div>
+                  <div class="pie-bar-wrap"><div class="pie-bar-fill" style="width:92%;background:#10b981"></div></div>
+                </div>
+                <div>
+                  <div class="pie-row"><span class="pie-dot" style="background:#f59e0b"></span><span class="pie-label">Sakit</span><span class="pie-val">1</span></div>
+                  <div class="pie-bar-wrap"><div class="pie-bar-fill" style="width:3%;background:#f59e0b"></div></div>
+                </div>
+                <div>
+                  <div class="pie-row"><span class="pie-dot" style="background:#3b82f6"></span><span class="pie-label">Izin</span><span class="pie-val">1</span></div>
+                  <div class="pie-bar-wrap"><div class="pie-bar-fill" style="width:3%;background:#3b82f6"></div></div>
+                </div>
+                <div>
+                  <div class="pie-row"><span class="pie-dot" style="background:#ef4444"></span><span class="pie-label">Alpha</span><span class="pie-val">1</span></div>
+                  <div class="pie-bar-wrap"><div class="pie-bar-fill" style="width:3%;background:#ef4444"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const students = [
+  {no:1,name:'Ahmad Rizki',nisn:'0056781234',status:'H'},
+  {no:2,name:'Bagus Wijaya',nisn:'0056781235',status:'T'},
+  {no:3,name:'Citra Dewi',nisn:'0056781236',status:'H'},
+  {no:4,name:'Dian Pratiwi',nisn:'0056781237',status:'H'},
+  {no:5,name:'Eka Saputra',nisn:'0056781238',status:'S'},
+  {no:6,name:'Fajar Nugroho',nisn:'0056781239',status:'H'},
+  {no:7,name:'Gilang Ramadhan',nisn:'0056781240',status:'H'},
+  {no:8,name:'Hani Kusuma',nisn:'0056781241',status:'I'},
+  {no:9,name:'Ilham Maulana',nisn:'0056781242',status:'H'},
+  {no:10,name:'Juwita Sari',nisn:'0056781243',status:'H'},
+  {no:11,name:'Kartika Wulandari',nisn:'0056781244',status:'H'},
+  {no:12,name:'Lutfi Haikal',nisn:'0056781245',status:'A'},
+  {no:13,name:'Maya Anggraini',nisn:'0056781246',status:'H'},
+  {no:14,name:'Nanda Puspita',nisn:'0056781247',status:'H'},
+  {no:15,name:'Oki Firmansyah',nisn:'0056781248',status:'H'},
+];
+
+const statusMap = {
+  H:{label:'Hadir',cls:'h',color:'#059669',bg:'#ecfdf5'},
+  S:{label:'Sakit',cls:'s',color:'#d97706',bg:'#fffbeb'},
+  I:{label:'Izin',cls:'i',color:'#1d4ed8',bg:'#eff6ff'},
+  A:{label:'Alpha',cls:'a',color:'#dc2626',bg:'#fef2f2'},
+  T:{label:'Terlambat',cls:'t',color:'#7c3aed',bg:'#f5f3ff'},
+};
+
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  const search = document.getElementById('search-input').value.toLowerCase();
+  tbody.innerHTML = '';
+  students.filter(s => s.name.toLowerCase().includes(search)).forEach(s => {
+    const sm = statusMap[s.status];
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><span class="no-badge">${s.no}</span></td>
+      <td style="font-weight:500;color:var(--gray-800)">${s.name}</td>
+      <td style="color:var(--gray-400);font-size:12px">${s.nisn}</td>
+      <td>
+        <div class="status-radios">
+          ${Object.entries(statusMap).map(([k,v])=>`
+            <span class="status-btn ${v.cls}${s.status===k?' sel':''}" onclick="setStatus(${s.no},'${k}',this)">${v.label}</span>
+          `).join('')}
+        </div>
+      </td>
+      <td><input type="text" placeholder="Catatan..." style="border:none;background:transparent;outline:none;font-size:12px;font-family:inherit;color:var(--gray-600);width:100%"></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function setStatus(no, status, el) {
+  const s = students.find(x=>x.no===no);
+  if (s) s.status = status;
+  const row = el.closest('tr');
+  row.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function setAllHadir() {
+  students.forEach(s=>s.status='H');
+  renderTable();
+}
+
+function filterSearch(v) { renderTable(); }
+
+function approveIzin(btn) {
+  const item = btn.closest('.izin-item');
+  item.style.opacity='0.4';
+  item.style.transition='opacity 0.3s';
+  btn.textContent='✓ Disetujui'; btn.disabled=true;
+  item.querySelector('.btn-reject').disabled=true;
+}
+function rejectIzin(btn) {
+  const item = btn.closest('.izin-item');
+  item.style.opacity='0.4';
+  item.style.transition='opacity 0.3s';
+  btn.textContent='✗ Ditolak'; btn.disabled=true;
+  item.querySelector('.btn-approve').disabled=true;
+}
+
+renderTable();
+</script>
+</body>
+</html>
