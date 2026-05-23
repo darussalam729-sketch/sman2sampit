@@ -1,0 +1,529 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --blue:#1a56db;--blue-lt:#eff6ff;--blue-dk:#1e40af;
+    --green:#10b981;--green-lt:#ecfdf5;
+    --amber:#f59e0b;--amber-lt:#fffbeb;
+    --red:#ef4444;--red-lt:#fef2f2;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+    --gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
+    --gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+    --sidebar-w:220px;--font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --radius:12px;--shadow:0 1px 3px rgba(0,0,0,0.08);
+  }
+  body{font-family:var(--font);background:#f0f4fc;color:var(--gray-800);font-size:14px;line-height:1.5;}
+  .app{display:flex;min-height:100vh}
+
+  .sidebar{width:var(--sidebar-w);background:linear-gradient(180deg,#0e2a5c,#1a3e7a);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+  .sidebar-logo{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px}
+  .logo-icon{width:38px;height:38px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;flex-shrink:0}
+  .logo-text .app-name{font-size:13px;font-weight:700;color:white;letter-spacing:0.5px}
+  .logo-text .school-name{font-size:10px;color:rgba(255,255,255,0.55)}
+  .nav-section{padding:12px 10px 4px}
+  .nav-label{font-size:9px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.35);text-transform:uppercase;padding:0 8px;margin-bottom:4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;margin:1px 0;font-size:13px;font-weight:500}
+  .nav-item:hover{background:rgba(255,255,255,0.08);color:white}
+  .nav-item.active{background:rgba(255,255,255,0.15);color:white}
+  .nav-icon{font-size:16px;width:18px;flex-shrink:0}
+  .nav-badge{margin-left:auto;background:var(--blue);color:white;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+
+  .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+  .header{height:60px;background:white;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:50}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s}
+  .btn-primary{background:var(--blue);color:white}
+  .btn-primary:hover{background:var(--blue-dk)}
+  .btn-outline{background:white;color:var(--gray-700);border:1px solid var(--gray-200)}
+  .btn-outline:hover{background:var(--gray-50)}
+
+  .content{padding:24px}
+
+  /* Top bar tabs */
+  .tab-row{display:flex;gap:0;background:var(--gray-100);border-radius:8px;padding:3px;margin-bottom:20px;width:fit-content}
+  .tab{padding:7px 18px;font-size:13px;font-weight:500;color:var(--gray-500);border-radius:6px;cursor:pointer;transition:all 0.15s}
+  .tab.active{background:white;color:var(--gray-800);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+
+  .layout{display:grid;grid-template-columns:1fr 320px;gap:16px}
+
+  .card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--gray-100);overflow:hidden}
+  .card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--gray-100)}
+  .card-title{font-size:14px;font-weight:600;color:var(--gray-800)}
+  .card-sub{font-size:11px;color:var(--gray-400);margin-top:2px}
+  .card-body{padding:20px}
+
+  /* Form */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-group.full{grid-column:1/-1}
+  label{font-size:12px;font-weight:600;color:var(--gray-600)}
+  .form-ctrl{
+    padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;
+    font-size:13px;font-family:var(--font);color:var(--gray-800);outline:none;
+    background:white;transition:border-color 0.15s;
+  }
+  .form-ctrl:focus{border-color:var(--blue)}
+  textarea.form-ctrl{resize:vertical;min-height:80px;line-height:1.5}
+  select.form-ctrl{cursor:pointer}
+
+  /* Metode chips */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .chip{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;border:1.5px solid var(--gray-200);color:var(--gray-500);cursor:pointer;transition:all 0.15s}
+  .chip.sel{background:var(--blue-lt);border-color:var(--blue);color:var(--blue)}
+
+  /* Upload area */
+  .upload-area{
+    border:2px dashed var(--gray-200);border-radius:10px;padding:20px;text-align:center;
+    cursor:pointer;transition:border-color 0.15s;background:var(--gray-50);
+  }
+  .upload-area:hover{border-color:var(--blue)}
+  .upload-icon{font-size:28px;margin-bottom:8px}
+  .upload-text{font-size:12px;color:var(--gray-500)}
+  .upload-sub{font-size:11px;color:var(--gray-300);margin-top:2px}
+
+  /* Signature pad */
+  .sig-pad{border:1px solid var(--gray-200);border-radius:10px;background:white;position:relative;overflow:hidden}
+  .sig-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--gray-300);pointer-events:none;text-align:center}
+  .sig-label.hidden{display:none}
+  canvas{display:block;cursor:crosshair}
+
+  /* Status badge */
+  .status-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+  .s-draft{background:var(--gray-100);color:var(--gray-500)}
+  .s-submit{background:var(--amber-lt);color:#d97706}
+  .s-approve{background:var(--green-lt);color:#059669}
+
+  /* History list */
+  .hist-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-50);cursor:pointer;transition:background 0.12s;margin:0 -18px;padding-left:18px;padding-right:18px}
+  .hist-item:last-child{border-bottom:none}
+  .hist-item:hover{background:var(--gray-50)}
+  .hist-date{width:42px;text-align:center;flex-shrink:0}
+  .hist-day{font-size:18px;font-weight:700;color:var(--blue);line-height:1}
+  .hist-month{font-size:10px;color:var(--gray-400);text-transform:uppercase}
+  .hist-info{flex:1}
+  .hist-mapel{font-size:13px;font-weight:600;color:var(--gray-800)}
+  .hist-detail{font-size:11px;color:var(--gray-400);margin-top:2px}
+  .hist-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+
+  /* Rekap mini */
+  .rekap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .rekap-card{background:var(--gray-50);border-radius:8px;padding:12px;text-align:center}
+  .rekap-val{font-size:20px;font-weight:700;color:var(--gray-800)}
+  .rekap-lbl{font-size:10px;color:var(--gray-400);font-weight:500;margin-top:2px}
+
+  /* Progress bar */
+  .prog-item{margin-bottom:10px}
+  .prog-top{display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px}
+  .prog-track{height:5px;background:var(--gray-100);border-radius:99px;overflow:hidden}
+  .prog-fill{height:100%;border-radius:99px}
+
+  /* Notif strip */
+  .notif-strip{display:flex;align-items:center;gap:10px;background:var(--amber-lt);border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#92400e}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">
+        <div class="app-name">SMART</div>
+        <div class="school-name">SMAN 2 SAMPIT</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-section">
+        <div class="nav-label">Utama</div>
+        <div class="nav-item"><span class="nav-icon">⊞</span> Dashboard</div>
+        <div class="nav-item"><span class="nav-icon">📅</span> Jadwal</div>
+        <div class="nav-item active"><span class="nav-icon">📓</span> Jurnal Guru</div>
+        <div class="nav-item"><span class="nav-icon">✅</span> Presensi</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">KBM & Izin</div>
+        <div class="nav-item"><span class="nav-icon">📊</span> Rekap KBM</div>
+        <div class="nav-item"><span class="nav-icon">📝</span> Izin Siswa</div>
+        <div class="nav-item"><span class="nav-icon">🗂️</span> Surat Izin</div>
+        <div class="nav-item"><span class="nav-icon">⏱️</span> Alokasi Waktu</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Layanan Siswa</div>
+        <div class="nav-item"><span class="nav-icon">💙</span> Layanan BK</div>
+        <div class="nav-item"><span class="nav-icon">⚠️</span> Pembinaan BK</div>
+        <div class="nav-item"><span class="nav-icon">👩‍🏫</span> Pembinaan Wali</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Laporan</div>
+        <div class="nav-item"><span class="nav-icon">📈</span> Laporan</div>
+        <div class="nav-item"><span class="nav-icon">⚙️</span> Pengaturan</div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div style="flex:1">
+        <div style="font-size:16px;font-weight:600;color:var(--gray-800)">Jurnal Mengajar</div>
+        <div style="font-size:11px;color:var(--gray-400)">Jumat, 22 Mei 2026 · Ibu Dewi Rahayu, S.Pd — Matematika</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline">📥 Export PDF</button>
+        <button class="btn btn-outline">📋 Rekap Semester</button>
+        <button class="btn btn-primary" onclick="submitJurnal()">📤 Submit & Tanda Tangan</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="tab-row">
+        <div class="tab active" onclick="switchTab(this,'form')">✏️ Isi Jurnal</div>
+        <div class="tab" onclick="switchTab(this,'history')">📋 Riwayat Jurnal</div>
+        <div class="tab" onclick="switchTab(this,'rekap')">📊 Rekap KBM</div>
+      </div>
+
+      <!-- FORM TAB -->
+      <div id="tab-form">
+        <div class="notif-strip">⚠️ <strong>Jurnal hari ini belum diisi.</strong> Harap isi sebelum pukul 15.00 WIB.</div>
+        <div class="layout">
+          <!-- Left: Form -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Form Jurnal Mengajar Harian</div>
+                <div class="card-sub">Jumat, 22 Mei 2026</div>
+              </div>
+              <span class="status-badge s-draft">✏️ Draft</span>
+            </div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Hari & Tanggal</label>
+                  <input class="form-ctrl" type="date" value="2026-05-22">
+                </div>
+                <div class="form-group">
+                  <label>Jam Pelajaran</label>
+                  <select class="form-ctrl">
+                    <option>Jam ke-1 (07.00 – 07.45)</option>
+                    <option>Jam ke-2 (07.45 – 08.30)</option>
+                    <option selected>Jam ke-3 (08.30 – 09.15)</option>
+                    <option>Jam ke-4 (09.30 – 10.15)</option>
+                    <option>Jam ke-5 (10.15 – 11.00)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Mata Pelajaran</label>
+                  <select class="form-ctrl">
+                    <option selected>Matematika Wajib</option>
+                    <option>Matematika Peminatan</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Kelas</label>
+                  <select class="form-ctrl">
+                    <option selected>XII IPA 1</option>
+                    <option>XII IPA 2</option>
+                    <option>XII IPA 3</option>
+                    <option>XI IPA 1</option>
+                  </select>
+                </div>
+                <div class="form-group full">
+                  <label>Materi Pembelajaran</label>
+                  <input class="form-ctrl" type="text" placeholder="Contoh: Integral Parsial — Teknik dan Penerapannya" value="Integral Parsial — Teknik dan Penerapan dalam Fisika">
+                </div>
+                <div class="form-group full">
+                  <label>Kompetensi Dasar (KD)</label>
+                  <input class="form-ctrl" type="text" placeholder="Nomor KD dan deskripsi..." value="3.11 Mendeskripsikan konsep integral parsial dalam menentukan luas daerah">
+                </div>
+                <div class="form-group full">
+                  <label>Metode Pembelajaran</label>
+                  <div class="chips" id="method-chips">
+                    <span class="chip sel" onclick="toggleChip(this)">Ceramah</span>
+                    <span class="chip sel" onclick="toggleChip(this)">Diskusi Kelompok</span>
+                    <span class="chip" onclick="toggleChip(this)">Tanya Jawab</span>
+                    <span class="chip sel" onclick="toggleChip(this)">Latihan Soal</span>
+                    <span class="chip" onclick="toggleChip(this)">Demonstrasi</span>
+                    <span class="chip" onclick="toggleChip(this)">Eksperimen</span>
+                    <span class="chip" onclick="toggleChip(this)">Project Based</span>
+                    <span class="chip" onclick="toggleChip(this)">Discovery Learning</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Kehadiran Siswa</label>
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:2px">
+                    <div>
+                      <label style="font-size:11px;color:var(--gray-400)">Hadir</label>
+                      <input class="form-ctrl" type="number" value="33" style="margin-top:3px">
+                    </div>
+                    <div>
+                      <label style="font-size:11px;color:var(--gray-400)">Sakit/Izin</label>
+                      <input class="form-ctrl" type="number" value="2" style="margin-top:3px">
+                    </div>
+                    <div>
+                      <label style="font-size:11px;color:var(--gray-400)">Alpha</label>
+                      <input class="form-ctrl" type="number" value="1" style="margin-top:3px">
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Alat & Media Pembelajaran</label>
+                  <select class="form-ctrl">
+                    <option>Papan Tulis + Spidol</option>
+                    <option selected>Proyektor + PPT</option>
+                    <option>Lembar Kerja Siswa</option>
+                    <option>Lab Komputer</option>
+                  </select>
+                </div>
+                <div class="form-group full">
+                  <label>Catatan Pembelajaran</label>
+                  <textarea class="form-ctrl" style="min-height:90px" placeholder="Tuliskan catatan, hambatan, atau hal penting selama KBM...">Siswa antusias mengikuti pelajaran. Beberapa siswa masih kesulitan pada bagian substitusi variabel. Perlu penguatan pada pertemuan berikutnya.</textarea>
+                </div>
+                <div class="form-group full">
+                  <label>Rencana Pertemuan Berikutnya</label>
+                  <input class="form-ctrl" type="text" placeholder="Materi selanjutnya..." value="Integral dengan Substitusi Trigonometri">
+                </div>
+                <div class="form-group full">
+                  <label>Upload Dokumentasi (Opsional)</label>
+                  <div class="upload-area" onclick="this.querySelector('input').click()">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">Klik untuk upload foto/dokumen KBM</div>
+                    <div class="upload-sub">JPG, PNG, PDF · Maks. 5MB</div>
+                    <input type="file" style="display:none" accept="image/*,.pdf">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Signature -->
+              <div style="margin-top:8px">
+                <label style="font-size:12px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:8px">Tanda Tangan Digital Guru</label>
+                <div class="sig-pad">
+                  <canvas id="sigCanvas" width="560" height="100"></canvas>
+                  <div class="sig-label" id="sigHint">✍️ Tanda tangan di sini</div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button class="btn btn-outline" onclick="clearSig()" style="font-size:12px;padding:6px 12px">🗑️ Hapus</button>
+                  <span style="font-size:11px;color:var(--gray-400);align-self:center">Gambar tanda tangan Anda di atas</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right panel -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <!-- Guru info -->
+            <div class="card">
+              <div class="card-body">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                  <div style="width:46px;height:46px;background:var(--blue-lt);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--blue)">DR</div>
+                  <div>
+                    <div style="font-size:14px;font-weight:600;color:var(--gray-800)">Ibu Dewi Rahayu, S.Pd</div>
+                    <div style="font-size:11px;color:var(--gray-400)">NIP: 198203142006042012</div>
+                    <div style="font-size:11px;color:var(--gray-400)">Guru Matematika · Wali XII IPA 1</div>
+                  </div>
+                </div>
+                <div style="background:var(--gray-50);border-radius:8px;padding:10px 12px">
+                  <div style="font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:6px">ALOKASI JP SEMESTER INI</div>
+                  <div class="prog-item">
+                    <div class="prog-top"><span style="color:var(--gray-600)">Matematika Wajib</span><span style="font-weight:600">84 / 96 JP</span></div>
+                    <div class="prog-track"><div class="prog-fill" style="width:87%;background:var(--blue)"></div></div>
+                  </div>
+                  <div class="prog-item" style="margin-bottom:0">
+                    <div class="prog-top"><span style="color:var(--gray-600)">Matematika Peminatan</span><span style="font-weight:600">72 / 80 JP</span></div>
+                    <div class="prog-track"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approval status -->
+            <div class="card">
+              <div class="card-header"><div class="card-title">Status Persetujuan</div></div>
+              <div class="card-body" style="padding:14px 18px">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:13px">✏️</div>
+                    <div style="flex:1">
+                      <div style="font-size:12px;font-weight:600;color:var(--gray-700)">Guru Mengisi</div>
+                      <div style="font-size:11px;color:var(--gray-400)">Bu Dewi Rahayu</div>
+                    </div>
+                    <span class="status-badge s-draft">Belum</span>
+                  </div>
+                  <div style="width:1px;height:16px;background:var(--gray-200);margin-left:14px"></div>
+                  <div style="display:flex;align-items:center;gap:10px;opacity:0.5">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:13px">👩‍💼</div>
+                    <div style="flex:1">
+                      <div style="font-size:12px;font-weight:600;color:var(--gray-700)">Verifikasi Waka Kurikulum</div>
+                      <div style="font-size:11px;color:var(--gray-400)">Pak Ahmad Fauzi, M.Pd</div>
+                    </div>
+                    <span class="status-badge s-draft">Menunggu</span>
+                  </div>
+                  <div style="width:1px;height:16px;background:var(--gray-200);margin-left:14px"></div>
+                  <div style="display:flex;align-items:center;gap:10px;opacity:0.5">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:circle;font-size:13px">✅</div>
+                    <div style="flex:1">
+                      <div style="font-size:12px;font-weight:600;color:var(--gray-700)">Disetujui</div>
+                    </div>
+                    <span class="status-badge s-draft">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Jurnal minggu ini -->
+            <div class="card">
+              <div class="card-header"><div class="card-title">Minggu Ini</div></div>
+              <div class="card-body" style="padding:10px 18px">
+                <div class="rekap-grid">
+                  <div class="rekap-card">
+                    <div class="rekap-val" style="color:var(--green)">4</div>
+                    <div class="rekap-lbl">Jurnal Diisi</div>
+                  </div>
+                  <div class="rekap-card">
+                    <div class="rekap-val" style="color:var(--amber)">1</div>
+                    <div class="rekap-lbl">Belum Diisi</div>
+                  </div>
+                  <div class="rekap-card">
+                    <div class="rekap-val" style="color:var(--blue)">3</div>
+                    <div class="rekap-lbl">Disetujui</div>
+                  </div>
+                  <div class="rekap-card">
+                    <div class="rekap-val" style="color:var(--gray-400)">1</div>
+                    <div class="rekap-lbl">Menunggu</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY TAB -->
+      <div id="tab-history" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Riwayat Jurnal Mengajar</div>
+              <div class="card-sub">Semester Genap 2025/2026 · Ibu Dewi Rahayu</div>
+            </div>
+            <button class="btn btn-outline" style="font-size:12px;padding:6px 12px">📥 Export PDF</button>
+          </div>
+          <div class="card-body" style="padding:8px 18px">
+            ${[
+              {day:'21',month:'Mei',mapel:'Matematika Wajib',kelas:'XII IPA 2',materi:'Integral Substitusi',status:'approve',jp:2},
+              {day:'20',month:'Mei',mapel:'Matematika Peminatan',kelas:'XI IPA 1',materi:'Turunan Fungsi Trigonometri',status:'approve',jp:3},
+              {day:'19',month:'Mei',mapel:'Matematika Wajib',kelas:'XII IPA 1',materi:'Integral Tentu — Luas Daerah',status:'approve',jp:2},
+              {day:'18',month:'Mei',mapel:'Matematika Wajib',kelas:'XII IPA 3',materi:'Aturan Rantai & Diferensiasi Implisit',status:'submit',jp:2},
+              {day:'15',month:'Mei',mapel:'Matematika Peminatan',kelas:'XI IPA 2',materi:'Limit Fungsi Aljabar',status:'approve',jp:3},
+            ].map(j=>`
+              <div class="hist-item">
+                <div class="hist-date">
+                  <div class="hist-day">${j.day}</div>
+                  <div class="hist-month">${j.month}</div>
+                </div>
+                <div class="hist-info">
+                  <div class="hist-mapel">${j.mapel} — ${j.kelas}</div>
+                  <div class="hist-detail">${j.materi} · ${j.jp} JP</div>
+                </div>
+                <div class="hist-right">
+                  <span class="status-badge ${j.status==='approve'?'s-approve':'s-submit'}">${j.status==='approve'?'✓ Disetujui':'⏳ Review'}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- REKAP TAB -->
+      <div id="tab-rekap" style="display:none">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Rekap JP Semester</div></div>
+            <div class="card-body">
+              <div style="font-size:36px;font-weight:700;color:var(--blue);text-align:center;margin:8px 0">156</div>
+              <div style="text-align:center;font-size:12px;color:var(--gray-400);margin-bottom:16px">dari 176 JP target</div>
+              <div class="prog-item">
+                <div class="prog-top"><span style="color:var(--gray-600);font-size:12px">Ketercapaian</span><span style="font-weight:600;font-size:12px">89%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:89%;background:var(--blue)"></div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+                <div class="rekap-card"><div class="rekap-val" style="color:var(--green)">156</div><div class="rekap-lbl">JP Terlaksana</div></div>
+                <div class="rekap-card"><div class="rekap-val" style="color:var(--red)">20</div><div class="rekap-lbl">JP Sisa</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Kehadiran Rata-rata</div></div>
+            <div class="card-body">
+              <div style="font-size:36px;font-weight:700;color:var(--green);text-align:center;margin:8px 0">94%</div>
+              <div style="text-align:center;font-size:12px;color:var(--gray-400);margin-bottom:16px">rata-rata kehadiran siswa</div>
+              <div class="prog-item">
+                <div class="prog-top"><span style="color:var(--gray-600);font-size:12px">Hadir</span><span style="font-weight:600;font-size:12px">94%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:94%;background:var(--green)"></div></div>
+              </div>
+              <div class="prog-item">
+                <div class="prog-top"><span style="color:var(--gray-600);font-size:12px">Sakit/Izin</span><span style="font-weight:600;font-size:12px">4%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:4%;background:var(--amber)"></div></div>
+              </div>
+              <div class="prog-item" style="margin-bottom:0">
+                <div class="prog-top"><span style="color:var(--gray-600);font-size:12px">Alpha</span><span style="font-weight:600;font-size:12px">2%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:2%;background:var(--red)"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Jurnal Bulan Ini</div></div>
+            <div class="card-body">
+              <div style="font-size:36px;font-weight:700;color:var(--amber);text-align:center;margin:8px 0">22</div>
+              <div style="text-align:center;font-size:12px;color:var(--gray-400);margin-bottom:16px">dari 24 pertemuan</div>
+              <div class="prog-item">
+                <div class="prog-top"><span style="color:var(--gray-600);font-size:12px">Diisi & Disetujui</span><span style="font-weight:600;font-size:12px">20</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:83%;background:var(--green)"></div></div>
+              </div>
+              <div class="prog-item" style="margin-bottom:0">
+                <div class="prog-top"><span style="color:var(--gray-600);font-size:12px">Belum Lengkap</span><span style="font-weight:600;font-size:12px">2</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:8%;background:var(--red)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Tabs
+function switchTab(el, id) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['form','history','rekap'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===id?'block':'none';
+  });
+}
+
+// Method chips
+function toggleChip(el) { el.classList.toggle('sel'); }
+
+// Signature canvas
+const canvas = document.getElementById('sigCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSig = false;
+ctx.strokeStyle = '#1a56db'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+canvas.addEventListener('mousedown', e=>{drawing=true; ctx.beginPath(); ctx.moveTo(...pos(e));});
+canvas.addEventListener('mousemove', e=>{ if(!drawing) return; ctx.lineTo(...pos(e)); ctx.stroke(); hasSig=true; document.getElementById('sigHint').classList.add('hidden'); });
+canvas.addEventListener('mouseup', ()=>drawing=false);
+canvas.addEventListener('mouseleave', ()=>drawing=false);
+function pos(e){ const r=canvas.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; }
+function clearSig(){ ctx.clearRect(0,0,canvas.width,canvas.height); hasSig=false; document.getElementById('sigHint').classList.remove('hidden'); }
+
+// Submit
+function submitJurnal() {
+  if(!hasSig){ alert('Silakan isi tanda tangan digital terlebih dahulu.'); return; }
+  alert('✅ Jurnal berhasil disubmit dan menunggu persetujuan Waka Kurikulum!');
+}
+</script>
+</body>
+</html>
