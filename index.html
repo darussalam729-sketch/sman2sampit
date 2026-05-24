@@ -3,1248 +3,253 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMART SMAN 2 Sampit — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>SIM Sekolah - Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-/* ===================================================
-   RESET & VARIABLES
-=================================================== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  /* Brand */
-  --navy:       #0b1f4a;
-  --navy-mid:   #122459;
-  --navy-lt:    #1a3370;
-  --blue:       #1e6fff;
-  --blue-lt:    #e8f0ff;
-  --blue-glow:  rgba(30,111,255,0.18);
-  /* Accent */
-  --teal:       #0fb9a0;
-  --teal-lt:    #dcfaf5;
-  --green:      #12c48a;
-  --green-lt:   #d6faf0;
-  --amber:      #f5a623;
-  --amber-lt:   #fff4de;
-  --red:        #f0455a;
-  --red-lt:     #ffeaed;
-  --purple:     #7c5cfc;
-  --purple-lt:  #ede8ff;
-  /* Neutrals */
-  --bg:         #f2f5fb;
-  --surface:    #ffffff;
-  --border:     #e4e9f2;
-  --text-1:     #0d1b3e;
-  --text-2:     #445580;
-  --text-3:     #8a97b5;
-  /* Typography */
-  --font-head:  'Sora', sans-serif;
-  --font-body:  'DM Sans', sans-serif;
-  /* Layout */
-  --sidebar-w:  240px;
-  --topbar-h:   64px;
-  --radius:     14px;
-  --radius-sm:  8px;
-  --shadow:     0 2px 8px rgba(11,31,74,0.07), 0 0 0 1px rgba(11,31,74,0.04);
-  --shadow-lg:  0 8px 32px rgba(11,31,74,0.12);
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --text:#1f2a44;
+  --muted:#6b7a99;
+  --primary:#2f6bff;
+  --border:#e6eaf2;
+  --sidebar:#0f1f3a;
 }
 
-html { scroll-behavior: smooth; }
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
 
-body {
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--text-1);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+body{
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  overflow:hidden;
 }
 
-/* ===================================================
-   LAYOUT
-=================================================== */
-.layout { display: flex; min-height: 100vh; }
-
-/* ===================================================
-   SIDEBAR
-=================================================== */
-.sidebar {
-  width: var(--sidebar-w);
-  background: var(--navy);
-  position: fixed;
-  top: 0; left: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  z-index: 200;
-  overflow-y: auto;
-  overflow-x: hidden;
+/* LAYOUT */
+.wrapper{
+  display:flex;
+  height:100vh;
 }
 
-/* subtle grid texture */
-.sidebar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-  pointer-events: none;
+/* SIDEBAR */
+.sidebar{
+  width:250px;
+  background:var(--sidebar);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
 }
 
-/* accent glow top */
-.sidebar::after {
-  content: '';
-  position: absolute;
-  top: -60px; left: 50%;
-  transform: translateX(-50%);
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(30,111,255,0.3), transparent 70%);
-  pointer-events: none;
+.brand{
+  padding:20px;
+  font-weight:700;
+  font-size:16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-.sidebar-logo {
-  padding: 24px 20px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  position: relative;
-  z-index: 1;
+.menu{
+  padding:10px;
+  flex:1;
+  overflow-y:auto;
 }
 
-.logo-mark {
-  width: 42px; height: 42px;
-  background: linear-gradient(135deg, var(--blue), #6ea8ff);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-head);
-  font-size: 18px; font-weight: 800;
-  color: white;
-  flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(30,111,255,0.45);
-  letter-spacing: -1px;
+.menu-item{
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:13px;
+  color:#cbd5e1;
+  cursor:pointer;
+  display:flex;
+  gap:10px;
+  align-items:center;
 }
 
-.logo-text {
-  display: flex; flex-direction: column; line-height: 1.2;
-}
-.logo-text .app { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 1px; }
-.logo-text .school { font-size: 10px; color: rgba(255,255,255,.4); font-weight: 500; letter-spacing: .3px; margin-top: 2px; }
-
-/* nav */
-.nav-group { padding: 16px 12px 6px; position: relative; z-index: 1; }
-.nav-group-label {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.4px;
-  color: rgba(255,255,255,.25); text-transform: uppercase;
-  padding: 0 8px; margin-bottom: 6px;
+.menu-item:hover{
+  background:rgba(255,255,255,.08);
+  color:#fff;
 }
 
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  color: rgba(255,255,255,.55);
-  cursor: pointer;
-  font-size: 13px; font-weight: 500;
-  transition: all .18s ease;
-  position: relative;
-  margin-bottom: 2px;
-  user-select: none;
-}
-.nav-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.9); }
-.nav-item.active {
-  background: linear-gradient(135deg, rgba(30,111,255,.25), rgba(30,111,255,.1));
-  color: #fff;
-  border: 1px solid rgba(30,111,255,.3);
-}
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: -1px; top: 50%; transform: translateY(-50%);
-  width: 3px; height: 60%; background: var(--blue);
-  border-radius: 0 3px 3px 0;
-}
-.nav-ico { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
-.nav-badge {
-  margin-left: auto;
-  background: var(--blue);
-  color: #fff; font-size: 10px; font-weight: 700;
-  padding: 2px 7px; border-radius: 20px;
-  min-width: 20px; text-align: center;
-}
-.nav-badge.warn { background: var(--amber); color: #fff; }
-.nav-badge.danger { background: var(--red); }
-
-/* sidebar user */
-.sidebar-user {
-  margin-top: auto;
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255,255,255,.07);
-  display: flex; align-items: center; gap: 10px;
-  position: relative; z-index: 1;
-  cursor: pointer;
-  transition: background .15s;
-}
-.sidebar-user:hover { background: rgba(255,255,255,.04); }
-.user-av {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, #6ea8ff, var(--blue));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-head); font-size: 12px; font-weight: 700;
-  color: #fff; flex-shrink: 0;
-}
-.user-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.85); }
-.user-role { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 1px; }
-.user-chevron { margin-left: auto; font-size: 10px; color: rgba(255,255,255,.25); }
-
-/* ===================================================
-   MAIN
-=================================================== */
-.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
-
-/* ===================================================
-   TOPBAR
-=================================================== */
-.topbar {
-  height: var(--topbar-h);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 28px;
-  gap: 16px;
-  position: sticky; top: 0; z-index: 100;
+/* MAIN */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
 
-.topbar-left { flex: 1; }
-.topbar-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--text-1); }
-.topbar-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
-
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-
-.search-bar {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 14px;
-  width: 220px;
-  transition: border-color .15s, box-shadow .15s;
-}
-.search-bar:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
-.search-bar input {
-  border: none; background: transparent; outline: none;
-  font-size: 13px; font-family: var(--font-body); color: var(--text-1); width: 100%;
-}
-.search-bar input::placeholder { color: var(--text-3); }
-.search-ico { color: var(--text-3); font-size: 14px; }
-
-.icon-btn {
-  width: 38px; height: 38px;
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; cursor: pointer; position: relative;
-  transition: background .15s, border-color .15s;
-  text-decoration: none;
-}
-.icon-btn:hover { background: var(--blue-lt); border-color: var(--blue); }
-.badge-dot {
-  position: absolute; top: 7px; right: 7px;
-  width: 7px; height: 7px;
-  background: var(--red); border-radius: 50%;
-  border: 2px solid var(--surface);
+/* TOPBAR */
+.topbar{
+  height:60px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
 }
 
-.user-chip {
-  display: flex; align-items: center; gap: 9px;
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 10px; padding: 6px 12px 6px 8px;
-  cursor: pointer; transition: border-color .15s;
-}
-.user-chip:hover { border-color: var(--blue); }
-.chip-av {
-  width: 28px; height: 28px;
-  background: linear-gradient(135deg, var(--blue), #6ea8ff);
-  border-radius: 7px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; color: #fff;
-}
-.chip-name { font-size: 12px; font-weight: 600; color: var(--text-1); }
-.chip-role { font-size: 10px; color: var(--text-3); }
-
-/* ===================================================
-   CONTENT AREA
-=================================================== */
-.content { padding: 28px; animation: fadeUp .4s ease both; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+.title{
+  font-weight:600;
 }
 
-/* section heading */
-.section-head {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
-}
-.section-title {
-  font-family: var(--font-head); font-size: 14px; font-weight: 700;
-  color: var(--text-1);
-  display: flex; align-items: center; gap: 8px;
-}
-.section-title::before {
-  content: '';
-  width: 3px; height: 16px;
-  background: var(--blue); border-radius: 2px;
-  display: inline-block;
-}
-.section-link { font-size: 12px; font-weight: 600; color: var(--blue); cursor: pointer; text-decoration: none; }
-.section-link:hover { text-decoration: underline; }
-
-/* ===================================================
-   STAT CARDS
-=================================================== */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
+.user{
+  font-size:13px;
+  color:var(--muted);
 }
 
-.stat-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
-  position: relative; overflow: hidden;
-}
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-
-/* colored top stripe */
-.stat-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-}
-.stat-card.c-blue::after  { background: linear-gradient(90deg, var(--blue), #6ea8ff); }
-.stat-card.c-green::after { background: linear-gradient(90deg, var(--green), #50e3c2); }
-.stat-card.c-amber::after { background: linear-gradient(90deg, var(--amber), #ffd580); }
-.stat-card.c-red::after   { background: linear-gradient(90deg, var(--red), #ff8a9a); }
-
-.stat-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-.stat-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-}
-.stat-trend {
-  font-size: 11px; font-weight: 700;
-  padding: 4px 9px; border-radius: 20px;
-  display: flex; align-items: center; gap: 3px;
-}
-.trend-up   { background: var(--green-lt); color: #0b9b6c; }
-.trend-down { background: var(--red-lt);   color: #c73247; }
-.trend-neu  { background: var(--bg);        color: var(--text-3); }
-
-.stat-value {
-  font-family: var(--font-head);
-  font-size: 32px; font-weight: 800;
-  color: var(--text-1); line-height: 1;
-  letter-spacing: -1px;
-}
-.stat-label { font-size: 12px; font-weight: 500; color: var(--text-3); margin-top: 4px; }
-.stat-sub   { font-size: 11px; color: var(--text-3); margin-top: 6px; }
-
-/* progress micro bar */
-.stat-bar { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; margin-top: 12px; }
-.stat-bar-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
-
-/* ===================================================
-   MAIN CONTENT GRID
-=================================================== */
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 16px;
-  margin-bottom: 16px;
+/* CONTENT */
+.content{
+  padding:20px;
+  overflow-y:auto;
 }
 
-/* ===================================================
-   CARD COMPONENT
-=================================================== */
-.card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+/* CARDS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:20px;
 }
 
-.card-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 20px;
-  border-bottom: 1px solid var(--border);
-}
-.card-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--text-1); }
-.card-sub   { font-size: 11px; color: var(--text-3); margin-top: 2px; }
-.card-action { font-size: 12px; font-weight: 600; color: var(--blue); cursor: pointer; border: none; background: none; padding: 0; font-family: var(--font-body); }
-.card-action:hover { text-decoration: underline; }
-.card-body  { padding: 20px; }
-
-/* ===================================================
-   CHART (BAR)
-=================================================== */
-.chart-wrap { display: flex; align-items: flex-end; gap: 8px; height: 110px; }
-.chart-bar-group {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; gap: 5px;
-}
-.chart-bars-inner { flex: 1; width: 100%; display: flex; align-items: flex-end; gap: 3px; }
-.chart-bar {
-  flex: 1; border-radius: 5px 5px 0 0;
-  min-height: 4px;
-  transition: opacity .15s;
-  cursor: pointer;
-}
-.chart-bar:hover { opacity: .75; }
-.chart-x { font-size: 10px; color: var(--text-3); }
-
-.chart-legend { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-3); }
-.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-
-.tabs-row {
-  display: flex; gap: 0;
-  background: var(--bg); border-radius: 9px; padding: 3px;
-  margin-bottom: 18px;
-}
-.ctab {
-  flex: 1; text-align: center; padding: 6px 10px;
-  font-size: 12px; font-weight: 500; color: var(--text-3);
-  border-radius: 7px; cursor: pointer; transition: all .15s;
-}
-.ctab.active { background: var(--surface); color: var(--text-1); box-shadow: 0 1px 4px rgba(0,0,0,.1); font-weight: 600; }
-.ctab:hover:not(.active) { color: var(--text-2); }
-
-/* Quick stats row */
-.qs-row { display: flex; gap: 10px; margin-top: 14px; }
-.qs-item {
-  flex: 1; background: var(--bg); border-radius: 9px;
-  padding: 10px; text-align: center;
-}
-.qs-val { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text-1); }
-.qs-lbl { font-size: 10px; color: var(--text-3); font-weight: 500; margin-top: 2px; }
-
-/* ===================================================
-   NOTIFICATIONS
-=================================================== */
-.notif-list {}
-.notif-item {
-  display: flex; gap: 10px;
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .12s;
-}
-.notif-item:last-child { border-bottom: none; }
-.notif-item:hover { background: var(--bg); }
-.notif-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.notif-body { flex: 1; }
-.notif-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
-.notif-text strong { color: var(--text-1); font-weight: 600; }
-.notif-time { font-size: 10px; color: var(--text-3); margin-top: 3px; }
-
-/* ===================================================
-   JADWAL TABLE
-=================================================== */
-.jtable { width: 100%; border-collapse: collapse; }
-.jtable th {
-  background: var(--bg); padding: 10px 16px;
-  text-align: left; font-size: 11px; font-weight: 700;
-  color: var(--text-3); letter-spacing: .4px; text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-}
-.jtable td {
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-  font-size: 13px; color: var(--text-2);
-  vertical-align: middle;
-}
-.jtable tr:last-child td { border-bottom: none; }
-.jtable tbody tr { transition: background .12s; cursor: pointer; }
-.jtable tbody tr:hover td { background: var(--bg); }
-
-.mapel-chip {
-  display: inline-flex; align-items: center;
-  padding: 4px 10px; border-radius: 7px;
-  font-size: 11px; font-weight: 600;
-}
-.jam-cell { font-family: var(--font-head); font-weight: 700; color: var(--text-1); white-space: nowrap; }
-
-.status-pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 4px 10px; border-radius: 20px;
-  font-size: 11px; font-weight: 600;
-  white-space: nowrap;
-}
-.sp-live   { background: #dcfce7; color: #166534; }
-.sp-soon   { background: var(--blue-lt); color: #1e40af; }
-.sp-pengganti { background: var(--amber-lt); color: #92400e; }
-
-/* ===================================================
-   SECOND ROW GRID
-=================================================== */
-.second-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:12px;
+  border:1px solid var(--border);
 }
 
-/* ===================================================
-   KEHADIRAN LIST
-=================================================== */
-.attend-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .12s;
+.card h3{
+  font-size:13px;
+  color:var(--muted);
 }
-.attend-item:last-child { border-bottom: none; }
-.attend-item:hover { background: var(--bg); }
-.attend-av {
-  width: 36px; height: 36px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; flex-shrink: 0;
-}
-.attend-name { font-size: 13px; font-weight: 600; color: var(--text-1); }
-.attend-kelas { font-size: 11px; color: var(--text-3); margin-top: 1px; }
-.attend-status {
-  margin-left: auto;
-  font-size: 11px; font-weight: 700;
-  padding: 4px 10px; border-radius: 20px;
-  flex-shrink: 0;
-}
-.as-hadir    { background: var(--green-lt); color: #0b9b6c; }
-.as-terlambat{ background: var(--purple-lt); color: #5b21b6; }
-.as-sakit    { background: var(--amber-lt); color: #b45309; }
-.as-alpha    { background: var(--red-lt); color: #c73247; }
-.as-izin     { background: var(--blue-lt); color: #1d4ed8; }
 
-/* ===================================================
-   PROGRESS BARS
-=================================================== */
-.prog-item { margin-bottom: 14px; }
-.prog-item:last-child { margin-bottom: 0; }
-.prog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-.prog-label { font-size: 12px; font-weight: 500; color: var(--text-2); }
-.prog-pct   { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--text-1); }
-.prog-track { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; }
-.prog-fill  { height: 100%; border-radius: 99px; transition: width .5s ease; }
+.card .num{
+  font-size:22px;
+  font-weight:700;
+  margin-top:8px;
+}
 
-/* ===================================================
-   GURU REKAP LIST
-=================================================== */
-.guru-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .12s;
+/* TABLE */
+.table{
+  width:100%;
+  background:#fff;
+  border-radius:12px;
+  border:1px solid var(--border);
+  overflow:hidden;
 }
-.guru-item:last-child { border-bottom: none; }
-.guru-item:hover { background: var(--bg); }
-.guru-av {
-  width: 34px; height: 34px; border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; flex-shrink: 0;
-}
-.guru-name  { font-size: 13px; font-weight: 500; color: var(--text-1); }
-.guru-mapel { font-size: 11px; color: var(--text-3); margin-top: 1px; }
-.guru-status { margin-left: auto; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
-.gs-hadir   { background: var(--green-lt); color: #0b9b6c; }
-.gs-belum   { background: var(--amber-lt); color: #b45309; }
 
-/* ===================================================
-   FOOTER ANNOUNCE
-=================================================== */
-.announce-bar {
-  background: linear-gradient(135deg, var(--navy), var(--navy-lt));
-  border-radius: var(--radius);
-  padding: 18px 24px;
-  display: flex; align-items: center; gap: 16px;
-  margin-bottom: 0;
-  position: relative; overflow: hidden;
+.table th, .table td{
+  padding:12px;
+  font-size:13px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
 }
-.announce-bar::before {
-  content: '';
-  position: absolute; top: -30px; right: -30px;
-  width: 140px; height: 140px;
-  background: radial-gradient(circle, rgba(30,111,255,.3), transparent 65%);
-  pointer-events: none;
-}
-.announce-ico { font-size: 28px; flex-shrink: 0; }
-.announce-text { flex: 1; }
-.announce-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: #fff; }
-.announce-desc  { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 3px; }
-.btn-announce {
-  background: white; color: var(--navy);
-  border: none; border-radius: 9px;
-  padding: 9px 18px; font-size: 12px; font-weight: 700;
-  cursor: pointer; font-family: var(--font-body);
-  white-space: nowrap; flex-shrink: 0;
-  transition: opacity .15s;
-}
-.btn-announce:hover { opacity: .85; }
 
-/* ===================================================
-   SCROLLBAR
-=================================================== */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
-
-/* ===================================================
-   RESPONSIVE (tablet basic)
-=================================================== */
-@media (max-width: 1200px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .second-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 900px) {
-  .content-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .second-grid { grid-template-columns: 1fr; }
+.table th{
+  background:#f8f9fc;
+  font-size:12px;
+  color:var(--muted);
 }
 </style>
 </head>
+
 <body>
 
-<div class="layout">
+<div class="wrapper">
 
-  <!-- ===== SIDEBAR ===== -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">S²</div>
-      <div class="logo-text">
-        <span class="app">SMART</span>
-        <span class="school">SMAN 2 SAMPIT</span>
-      </div>
-    </div>
+    <div class="brand">📘 SIM SEKOLAH</div>
 
-    <nav>
-      <div class="nav-group">
-        <div class="nav-group-label">Utama</div>
-        <div class="nav-item active" onclick="setNav(this)">
-          <span class="nav-ico">⊞</span> Dashboard
-        </div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">📅</span> Jadwal
-          <span class="nav-badge">Hari ini</span>
-        </div>
-       <div class="nav-item" onclick="window.location.href='pages/jurnal.html'">
-  <span class="nav-ico">📓</span> Jurnal Guru
-  <span class="nav-badge warn">12</span>
-</div>
-       <a class="nav-item" href="pages/presensi.html">
-  <span class="nav-ico">✅</span> Presensi
-  <span class="nav-badge danger">3</span>
-</a>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-group-label">KBM & Izin</div>
-
-<a class="nav-item" href="pages/izinsiswa.html">
-  <span class="nav-ico">📊</span> Rekap KBM
-</a>
-        </div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">📝</span> Izin Siswa
-          <span class="nav-badge warn">3</span>
-        </div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">🗂️</span> Surat Izin
-        </div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">⏱️</span> Alokasi Waktu
-        </div>
-      </div>
-
-     <div class="nav-group">
-  <div class="nav-group-label">Layanan Siswa</div>
-
-  <div class="nav-group">
-  <div class="nav-group-label">Layanan Siswa</div>
-
-  <a class="nav-item" href="pages/bk.html">
-    <span class="nav-ico">💙</span> Layanan BK
-  </a>
-
-</div>
-
- <a class="nav-item" href="pages/pembinaansiswa.html">
-  <span class="nav-ico">⚠️</span> Pembinaan BK
-</a>
-</div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">👩‍🏫</span> Pembinaan Wali
-        </div>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Sistem</div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">📈</span> Laporan
-        </div>
-        <div class="nav-item" onclick="setNav(this)">
-          <span class="nav-ico">⚙️</span> Pengaturan
-        </div>
-      </div>
-    </nav>
-
-    <div class="sidebar-user">
-      <div class="user-av">KS</div>
-      <div>
-        <div class="user-name">Kepala Sekolah</div>
-        <div class="user-role">Administrator</div>
-      </div>
-      <span class="user-chevron">▲</span>
+    <div class="menu">
+      <div class="menu-item">🏠 Dashboard</div>
+      <div class="menu-item">👨‍🏫 Guru</div>
+      <div class="menu-item">🎓 Siswa</div>
+      <div class="menu-item">📅 Jadwal</div>
+      <div class="menu-item">📊 Nilai</div>
+      <div class="menu-item">📝 Absensi</div>
+      <div class="menu-item">⚠️ BK & Pembinaan</div>
+      <div class="menu-item">📁 Laporan</div>
+      <div class="menu-item">⚙️ Pengaturan</div>
     </div>
   </aside>
 
-  <!-- ===== MAIN ===== -->
+  <!-- MAIN -->
   <main class="main">
 
-    <!-- Topbar -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-title">Dashboard Utama</div>
-        <div class="topbar-sub" id="live-date">Memuat tanggal...</div>
-      </div>
-      <div class="topbar-right">
-        <div class="search-bar">
-          <span class="search-ico">🔍</span>
-          <input type="text" placeholder="Cari siswa, guru, kelas...">
-        </div>
-        <div class="icon-btn" title="Notifikasi">🔔<div class="badge-dot"></div></div>
-        <div class="icon-btn" title="Kalender">📆</div>
-        <div class="user-chip">
-          <div class="chip-av">KS</div>
-          <div>
-            <div class="chip-name">Kepsek</div>
-            <div class="chip-role">SMAN 2 Sampit</div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="title">Dashboard Utama</div>
+      <div class="user">Admin • SMAN 2 Sampit</div>
+    </div>
 
-    <!-- Content -->
+    <!-- CONTENT -->
     <div class="content">
 
-      <!-- === STAT CARDS === -->
-      <div class="stats-grid">
-
-        <div class="stat-card c-blue" onclick="alert('Buka daftar guru aktif')">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#e8f0ff">👨‍🏫</div>
-            <span class="stat-trend trend-up">▲ 2 baru</span>
-          </div>
-          <div class="stat-value">68</div>
-          <div class="stat-label">Guru Aktif</div>
-          <div class="stat-sub">65 hadir · 3 tidak hadir hari ini</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:96%;background:linear-gradient(90deg,#1e6fff,#6ea8ff)"></div></div>
-        </div>
-
-        <div class="stat-card c-green" onclick="alert('Buka daftar murid aktif')">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#d6faf0">🎓</div>
-            <span class="stat-trend trend-up">▲ 96.2%</span>
-          </div>
-          <div class="stat-value">1.247</div>
-          <div class="stat-label">Murid Aktif</div>
-          <div class="stat-sub">1.198 hadir · 49 tidak hadir</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:96%;background:linear-gradient(90deg,#12c48a,#50e3c2)"></div></div>
-        </div>
-
-        <div class="stat-card c-amber" onclick="alert('Buka rekap KBM minggu ini')">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#fff4de">📖</div>
-            <span class="stat-trend trend-up">92%</span>
-          </div>
-          <div class="stat-value">184</div>
-          <div class="stat-label">KBM Terlaksana</div>
-          <div class="stat-sub">Minggu ini · 16 kelas kosong</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:92%;background:linear-gradient(90deg,#f5a623,#ffd580)"></div></div>
-        </div>
-
-        <div class="stat-card c-red" onclick="alert('Buka daftar keterlambatan')">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#ffeaed">⏰</div>
-            <span class="stat-trend trend-down">▲ 5 dari kemarin</span>
-          </div>
-          <div class="stat-value">23</div>
-          <div class="stat-label">Keterlambatan</div>
-          <div class="stat-sub">20 siswa · 3 guru hari ini</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:23%;background:linear-gradient(90deg,#f0455a,#ff8a9a)"></div></div>
-        </div>
-
-      </div>
-
-      <!-- === CONTENT GRID: Chart + Notif === -->
-      <div class="section-head">
-        <span class="section-title">Rekap &amp; Notifikasi</span>
-        <span class="section-link">Lihat semua →</span>
-      </div>
-      <div class="content-grid" style="margin-bottom:28px">
-
-        <!-- Chart KBM -->
+      <!-- STATS -->
+      <div class="grid">
         <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Grafik KBM Mingguan</div>
-              <div class="card-sub">Persentase keterlaksanaan per hari</div>
-            </div>
-            <button class="card-action" onclick="alert('Export laporan KBM')">Export PDF ↗</button>
-          </div>
-          <div class="card-body">
-            <div class="tabs-row">
-              <div class="ctab active" onclick="switchTab(this,'week')">Minggu ini</div>
-              <div class="ctab" onclick="switchTab(this,'month')">Bulan ini</div>
-              <div class="ctab" onclick="switchTab(this,'semester')">Semester</div>
-            </div>
-            <div class="chart-wrap" id="kbm-chart">
-              <!-- bars injected by JS -->
-            </div>
-            <div class="chart-legend">
-              <div class="legend-item"><div class="legend-dot" style="background:#1e6fff"></div>KBM Guru</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#93c5fd"></div>Kehadiran Murid</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#f0455a"></div>Kelas Kosong</div>
-            </div>
-            <div class="qs-row">
-              <div class="qs-item">
-                <div class="qs-val" style="color:var(--blue)">92%</div>
-                <div class="qs-lbl">KBM Tercapai</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-val" style="color:var(--green)">96%</div>
-                <div class="qs-lbl">Hadir Guru</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-val" style="color:var(--red)">16</div>
-                <div class="qs-lbl">Kelas Kosong</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-val" style="color:var(--amber)">23</div>
-                <div class="qs-lbl">Terlambat</div>
-              </div>
-            </div>
-          </div>
+          <h3>Total Siswa</h3>
+          <div class="num">1.247</div>
         </div>
-
-        <!-- Notifikasi -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Notifikasi</div>
-              <div class="card-sub">5 notifikasi baru hari ini</div>
-            </div>
-            <button class="card-action">Tandai baca</button>
-          </div>
-          <div class="notif-list">
-            <div class="notif-item">
-              <div class="notif-dot" style="background:var(--red)"></div>
-              <div class="notif-body">
-                <div class="notif-text"><strong>3 Izin Siswa</strong> menunggu persetujuan guru piket</div>
-                <div class="notif-time">5 menit lalu</div>
-              </div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-dot" style="background:var(--amber)"></div>
-              <div class="notif-body">
-                <div class="notif-text"><strong>12 Guru</strong> belum mengisi jurnal mengajar hari ini</div>
-                <div class="notif-time">30 menit lalu</div>
-              </div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-dot" style="background:var(--red)"></div>
-              <div class="notif-body">
-                <div class="notif-text"><strong>Siti Rahayu</strong> XII IPA 2 – terlambat 3× bulan ini</div>
-                <div class="notif-time">1 jam lalu</div>
-              </div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-dot" style="background:var(--green)"></div>
-              <div class="notif-body">
-                <div class="notif-text"><strong>Pembinaan BK</strong> dijadwalkan Senin, 25 Mei 2026</div>
-                <div class="notif-time">2 jam lalu</div>
-              </div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-dot" style="background:var(--purple)"></div>
-              <div class="notif-body">
-                <div class="notif-text"><strong>Laporan Wali Kelas</strong> XI IPS 3 telah diverifikasi</div>
-                <div class="notif-time">3 jam lalu</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- === JADWAL HARI INI === -->
-      <div class="section-head">
-        <span class="section-title">Jadwal &amp; Kehadiran Hari Ini</span>
-        <span class="section-link">Lihat jadwal lengkap →</span>
-      </div>
-      <div class="content-grid" style="margin-bottom:28px">
 
         <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Jadwal Pelajaran Hari Ini</div>
-              <div class="card-sub" id="jadwal-date">Jumat, 22 Mei 2026</div>
-            </div>
-            <button class="card-action">Cetak →</button>
-          </div>
-          <div style="overflow-x:auto">
-            <table class="jtable">
-              <thead>
-                <tr>
-                  <th>Jam</th>
-                  <th>Mata Pelajaran</th>
-                  <th>Kelas</th>
-                  <th>Guru</th>
-                  <th>Ruang</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="jam-cell">07.00–07.45</td>
-                  <td><span class="mapel-chip" style="background:#e8f0ff;color:#1d4ed8">Matematika</span></td>
-                  <td>XII IPA 1</td>
-                  <td>Bu Dewi Rahayu</td>
-                  <td>R-12</td>
-                  <td><span class="status-pill sp-live">🟢 Berlangsung</span></td>
-                </tr>
-                <tr>
-                  <td class="jam-cell">07.45–08.30</td>
-                  <td><span class="mapel-chip" style="background:#d6faf0;color:#065f46">Biologi</span></td>
-                  <td>XI IPA 2</td>
-                  <td>Pak Rudi Hartono</td>
-                  <td>Lab Bio</td>
-                  <td><span class="status-pill sp-live">🟢 Berlangsung</span></td>
-                </tr>
-                <tr>
-                  <td class="jam-cell">08.30–09.15</td>
-                  <td><span class="mapel-chip" style="background:#fff4de;color:#92400e">Sejarah</span></td>
-                  <td>X IPS 3</td>
-                  <td>Bu Rina Oktavia</td>
-                  <td>R-07</td>
-                  <td><span class="status-pill sp-pengganti">⚡ Guru Pengganti</span></td>
-                </tr>
-                <tr>
-                  <td class="jam-cell">09.30–10.15</td>
-                  <td><span class="mapel-chip" style="background:#ede8ff;color:#4c1d95">Fisika</span></td>
-                  <td>XII IPA 3</td>
-                  <td>Pak Hendra W.</td>
-                  <td>R-15</td>
-                  <td><span class="status-pill sp-soon">⏳ Akan Dimulai</span></td>
-                </tr>
-                <tr>
-                  <td class="jam-cell">10.15–11.00</td>
-                  <td><span class="mapel-chip" style="background:#dcfaf5;color:#0d6b5f">B. Indonesia</span></td>
-                  <td>XI IPS 1</td>
-                  <td>Bu Sari Dewi</td>
-                  <td>R-09</td>
-                  <td><span class="status-pill sp-soon">⏳ Akan Dimulai</span></td>
-                </tr>
-                <tr>
-                  <td class="jam-cell">11.00–11.45</td>
-                  <td><span class="mapel-chip" style="background:#ffeaed;color:#b91c1c">Kimia</span></td>
-                  <td>XII IPA 2</td>
-                  <td>Bu Lestari N.</td>
-                  <td>Lab Kim</td>
-                  <td><span class="status-pill sp-soon">⏳ Akan Dimulai</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <h3>Total Guru</h3>
+          <div class="num">68</div>
         </div>
 
-        <!-- Kehadiran terkini -->
         <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Kehadiran Terkini</div>
-              <div class="card-sub">Input presensi terbaru hari ini</div>
-            </div>
-            <button class="card-action">Semua →</button>
-          </div>
-          <div>
-            <div class="attend-item">
-              <div class="attend-av" style="background:#e8f0ff;color:#1d4ed8">AR</div>
-              <div>
-                <div class="attend-name">Ahmad Rizki</div>
-                <div class="attend-kelas">XII IPA 1 · 07:32</div>
-              </div>
-              <span class="attend-status as-hadir">Hadir</span>
-            </div>
-            <div class="attend-item">
-              <div class="attend-av" style="background:#ede8ff;color:#4c1d95">SR</div>
-              <div>
-                <div class="attend-name">Siti Rahayu</div>
-                <div class="attend-kelas">XII IPA 2 · 08:17</div>
-              </div>
-              <span class="attend-status as-terlambat">Terlambat</span>
-            </div>
-            <div class="attend-item">
-              <div class="attend-av" style="background:#fff4de;color:#92400e">BK</div>
-              <div>
-                <div class="attend-name">Budi Kurniawan</div>
-                <div class="attend-kelas">XI IPS 2 · Pagi ini</div>
-              </div>
-              <span class="attend-status as-sakit">Sakit</span>
-            </div>
-            <div class="attend-item">
-              <div class="attend-av" style="background:#ffeaed;color:#b91c1c">NL</div>
-              <div>
-                <div class="attend-name">Nur Laila</div>
-                <div class="attend-kelas">X MIPA 4 · Pagi ini</div>
-              </div>
-              <span class="attend-status as-alpha">Alpha</span>
-            </div>
-            <div class="attend-item">
-              <div class="attend-av" style="background:#d6faf0;color:#065f46">CP</div>
-              <div>
-                <div class="attend-name">Citra Puspita</div>
-                <div class="attend-kelas">XII IPA 1 · 07:40</div>
-              </div>
-              <span class="attend-status as-izin">Izin</span>
-            </div>
-          </div>
+          <h3>Kelas Aktif</h3>
+          <div class="num">36</div>
         </div>
 
+        <div class="card">
+          <h3>Absensi Hari Ini</h3>
+          <div class="num">96%</div>
+        </div>
       </div>
 
-      <!-- === THIRD ROW === -->
-      <div class="section-head">
-        <span class="section-title">Progress &amp; Monitoring</span>
-      </div>
-      <div class="second-grid" style="margin-bottom:28px">
-
-        <!-- Alokasi JP -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Alokasi Jam Pelajaran</div>
-            <button class="card-action">Detail →</button>
-          </div>
-          <div class="card-body">
-            <div class="prog-item">
-              <div class="prog-header">
-                <span class="prog-label">Matematika</span>
-                <span class="prog-pct">87% · 84/96 JP</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" style="width:87%;background:linear-gradient(90deg,#1e6fff,#6ea8ff)"></div></div>
-            </div>
-            <div class="prog-item">
-              <div class="prog-header">
-                <span class="prog-label">Bahasa Indonesia</span>
-                <span class="prog-pct">92% · 74/80 JP</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" style="width:92%;background:linear-gradient(90deg,#12c48a,#50e3c2)"></div></div>
-            </div>
-            <div class="prog-item">
-              <div class="prog-header">
-                <span class="prog-label">Fisika</span>
-                <span class="prog-pct">74% · 59/80 JP</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" style="width:74%;background:linear-gradient(90deg,#f5a623,#ffd580)"></div></div>
-            </div>
-            <div class="prog-item">
-              <div class="prog-header">
-                <span class="prog-label">Kimia</span>
-                <span class="prog-pct">68% · 54/80 JP</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" style="width:68%;background:linear-gradient(90deg,#7c5cfc,#b09cff)"></div></div>
-            </div>
-            <div class="prog-item">
-              <div class="prog-header">
-                <span class="prog-label">Sejarah</span>
-                <span class="prog-pct">61% · 49/80 JP</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" style="width:61%;background:linear-gradient(90deg,#f0455a,#ff8a9a)"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Rekap Guru -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Jurnal Guru Hari Ini</div>
-            <button class="card-action">Ingatkan semua →</button>
-          </div>
-          <div>
-            <div class="guru-item">
-              <div class="guru-av" style="background:#e8f0ff;color:#1d4ed8">DR</div>
-              <div>
-                <div class="guru-name">Bu Dewi Rahayu</div>
-                <div class="guru-mapel">Matematika · XII IPA 1–3</div>
-              </div>
-              <span class="guru-status gs-hadir">✓ Diisi</span>
-            </div>
-            <div class="guru-item">
-              <div class="guru-av" style="background:#d6faf0;color:#065f46">RH</div>
-              <div>
-                <div class="guru-name">Pak Rudi Hartono</div>
-                <div class="guru-mapel">Biologi · XI IPA</div>
-              </div>
-              <span class="guru-status gs-hadir">✓ Diisi</span>
-            </div>
-            <div class="guru-item">
-              <div class="guru-av" style="background:#fff4de;color:#92400e">RO</div>
-              <div>
-                <div class="guru-name">Bu Rina Oktavia</div>
-                <div class="guru-mapel">Sejarah · X IPS</div>
-              </div>
-              <span class="guru-status gs-belum">⚠ Belum</span>
-            </div>
-            <div class="guru-item">
-              <div class="guru-av" style="background:#ede8ff;color:#4c1d95">HW</div>
-              <div>
-                <div class="guru-name">Pak Hendra W.</div>
-                <div class="guru-mapel">Fisika · XII IPA</div>
-              </div>
-              <span class="guru-status gs-belum">⚠ Belum</span>
-            </div>
-            <div class="guru-item">
-              <div class="guru-av" style="background:#dcfaf5;color:#0d6b5f">SD</div>
-              <div>
-                <div class="guru-name">Bu Sari Dewi</div>
-                <div class="guru-mapel">B. Indonesia · XI IPS</div>
-              </div>
-              <span class="guru-status gs-hadir">✓ Diisi</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- BK & Pembinaan mini -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">BK &amp; Pembinaan</div>
-            <button class="card-action">Detail →</button>
-          </div>
-          <div class="card-body">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-              <div style="background:var(--blue-lt);border-radius:10px;padding:14px;text-align:center">
-                <div style="font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--blue)">48</div>
-                <div style="font-size:10px;color:var(--text-3);font-weight:500;margin-top:2px">Konseling</div>
-              </div>
-              <div style="background:var(--amber-lt);border-radius:10px;padding:14px;text-align:center">
-                <div style="font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--amber)">31</div>
-                <div style="font-size:10px;color:var(--text-3);font-weight:500;margin-top:2px">Pembinaan</div>
-              </div>
-              <div style="background:var(--red-lt);border-radius:10px;padding:14px;text-align:center">
-                <div style="font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--red)">5</div>
-                <div style="font-size:10px;color:var(--text-3);font-weight:500;margin-top:2px">Surat Peringatan</div>
-              </div>
-              <div style="background:var(--green-lt);border-radius:10px;padding:14px;text-align:center">
-                <div style="font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--green)">8</div>
-                <div style="font-size:10px;color:var(--text-3);font-weight:500;margin-top:2px">Siswa Pantauan</div>
-              </div>
-            </div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Kategori Pelanggaran</div>
-            <div class="prog-item">
-              <div class="prog-header"><span class="prog-label" style="font-size:11px">Tata Tertib</span><span class="prog-pct" style="font-size:11px">12 kasus</span></div>
-              <div class="prog-track"><div class="prog-fill" style="width:39%;background:var(--red)"></div></div>
-            </div>
-            <div class="prog-item">
-              <div class="prog-header"><span class="prog-label" style="font-size:11px">Absensi</span><span class="prog-pct" style="font-size:11px">9 kasus</span></div>
-              <div class="prog-track"><div class="prog-fill" style="width:29%;background:var(--purple)"></div></div>
-            </div>
-            <div class="prog-item">
-              <div class="prog-header"><span class="prog-label" style="font-size:11px">Sikap</span><span class="prog-pct" style="font-size:11px">7 kasus</span></div>
-              <div class="prog-track"><div class="prog-fill" style="width:23%;background:var(--amber)"></div></div>
-            </div>
-          </div>
-        </div>
-
+      <!-- TABLE -->
+      <div class="table">
+        <table width="100%">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Kelas</th>
+              <th>Status</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ahmad Rizki</td>
+              <td>XII IPA 1</td>
+              <td>Hadir</td>
+              <td>07:12</td>
+            </tr>
+            <tr>
+              <td>Siti Rahayu</td>
+              <td>XII IPA 2</td>
+              <td>Terlambat</td>
+              <td>07:35</td>
+            </tr>
+            <tr>
+              <td>Budi Kurniawan</td>
+              <td>XI IPS 2</td>
+              <td>Izin</td>
+              <td>08:00</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- === ANNOUNCE BAR === -->
-      <div class="announce-bar">
-        <span class="announce-ico">📢</span>
-        <div class="announce-text">
-          <div class="announce-title">Pengembangan Fitur Selanjutnya: Integrasi e-Rapor &amp; QR Code Siswa</div>
-          <div class="announce-desc">Fitur ekspor nilai otomatis dan scan kartu pelajar akan segera tersedia di Versi 2.0 — SMART SMAN 2 Sampit</div>
-        </div>
-        <button class="btn-announce">Pelajari →</button>
-      </div>
+    </div>
 
-    </div><!-- /content -->
   </main>
 </div>
-
-<!-- ===================================================
-     JAVASCRIPT
-=================================================== -->
-<script>
-// ---- Live Date ----
-(function() {
-  const days  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const months= ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-  const now   = new Date();
-  const str   = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} · Semester Genap 2025/2026`;
-  document.getElementById('live-date').textContent = str;
-  document.getElementById('jadwal-date').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-})();
-
-// ---- Sidebar nav active ----
-function setNav(el) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// ---- Chart Tabs ----
-function switchTab(el, id) {
-  el.closest('.tabs-row').querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderChart(id);
-}
-
-// ---- KBM Chart ----
-const chartData = {
-  week:     { labels:['Sen','Sel','Rab','Kam','Jum','Sab'], kbm:[72,90,78,85,40,55], murid:[55,62,65,70,30,40], kosong:[3,1,2,1,8,4] },
-  month:    { labels:['M1','M2','M3','M4'], kbm:[80,88,76,92], murid:[72,80,70,88], kosong:[6,4,8,3] },
-  semester: { labels:['Jan','Feb','Mar','Apr','Mei','Jun'], kbm:[78,82,75,88,91,0], murid:[70,75,68,82,87,0], kosong:[10,8,12,6,5,0] },
-};
-
-function renderChart(key) {
-  const d = chartData[key];
-  const container = document.getElementById('kbm-chart');
-  const maxVal = Math.max(...d.kbm, ...d.murid);
-  container.innerHTML = d.labels.map((lbl, i) => {
-    const h1 = (d.kbm[i]   / maxVal * 100).toFixed(1);
-    const h2 = (d.murid[i] / maxVal * 100).toFixed(1);
-    const h3 = d.kosong[i] > 0 ? Math.max(d.kosong[i] / maxVal * 100, 3).toFixed(1) : 0;
-    return `
-      <div class="chart-bar-group">
-        <div class="chart-bars-inner">
-          <div class="chart-bar" style="height:${h1}%;background:var(--blue)" title="KBM: ${d.kbm[i]}%"></div>
-          <div class="chart-bar" style="height:${h2}%;background:#93c5fd" title="Murid: ${d.murid[i]}%"></div>
-          ${h3 > 0 ? `<div class="chart-bar" style="height:${h3}%;background:var(--red);opacity:.7" title="Kosong: ${d.kosong[i]}"></div>` : ''}
-        </div>
-        <span class="chart-x">${lbl}</span>
-      </div>`;
-  }).join('');
-}
-
-renderChart('week');
-</script>
 
 </body>
 </html>
