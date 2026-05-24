@@ -1,255 +1,37 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIM Sekolah - Dashboard</title>
+<div class="nav-group">
+  <div class="nav-group-label">KBM & Izin</div>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <a class="nav-item" href="pages/izinsiswa.html">
+    <span class="nav-ico">📊</span> Rekap KBM
+  </a>
 
-<style>
-:root{
-  --bg:#f4f6fb;
-  --card:#ffffff;
-  --text:#1f2a44;
-  --muted:#6b7a99;
-  --primary:#2f6bff;
-  --border:#e6eaf2;
-  --sidebar:#0f1f3a;
-}
+  <div class="nav-item" onclick="setNav(this)">
+    <span class="nav-ico">📝</span> Izin Siswa
+    <span class="nav-badge warn">3</span>
+  </div>
 
-/* RESET */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+  <div class="nav-item" onclick="setNav(this)">
+    <span class="nav-ico">🗂️</span> Surat Izin
+  </div>
 
-body{
-  background:var(--bg);
-  color:var(--text);
-  height:100vh;
-  overflow:hidden;
-}
-
-/* LAYOUT */
-.wrapper{
-  display:flex;
-  height:100vh;
-}
-
-/* SIDEBAR */
-.sidebar{
-  width:250px;
-  background:var(--sidebar);
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-}
-
-.brand{
-  padding:20px;
-  font-weight:700;
-  font-size:16px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.menu{
-  padding:10px;
-  flex:1;
-  overflow-y:auto;
-}
-
-.menu-item{
-  padding:10px 12px;
-  border-radius:8px;
-  font-size:13px;
-  color:#cbd5e1;
-  cursor:pointer;
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-
-.menu-item:hover{
-  background:rgba(255,255,255,.08);
-  color:#fff;
-}
-
-/* MAIN */
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-
-/* TOPBAR */
-.topbar{
-  height:60px;
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 20px;
-}
-
-.title{
-  font-weight:600;
-}
-
-.user{
-  font-size:13px;
-  color:var(--muted);
-}
-
-/* CONTENT */
-.content{
-  padding:20px;
-  overflow-y:auto;
-}
-
-/* CARDS */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:20px;
-}
-
-.card{
-  background:var(--card);
-  padding:15px;
-  border-radius:12px;
-  border:1px solid var(--border);
-}
-
-.card h3{
-  font-size:13px;
-  color:var(--muted);
-}
-
-.card .num{
-  font-size:22px;
-  font-weight:700;
-  margin-top:8px;
-}
-
-/* TABLE */
-.table{
-  width:100%;
-  background:#fff;
-  border-radius:12px;
-  border:1px solid var(--border);
-  overflow:hidden;
-}
-
-.table th, .table td{
-  padding:12px;
-  font-size:13px;
-  border-bottom:1px solid var(--border);
-  text-align:left;
-}
-
-.table th{
-  background:#f8f9fc;
-  font-size:12px;
-  color:var(--muted);
-}
-</style>
-</head>
-
-<body>
-
-<div class="wrapper">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">📘 SIM SEKOLAH</div>
-
-    <div class="menu">
-      <div class="menu-item">🏠 Dashboard</div>
-      <div class="menu-item">👨‍🏫 Guru</div>
-      <div class="menu-item">🎓 Siswa</div>
-      <div class="menu-item">📅 Jadwal</div>
-      <div class="menu-item">📊 Nilai</div>
-      <div class="menu-item">📝 Absensi</div>
-      <div class="menu-item">⚠️ BK & Pembinaan</div>
-      <div class="menu-item">📁 Laporan</div>
-      <div class="menu-item">⚙️ Pengaturan</div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="title">Dashboard Utama</div>
-      <div class="user">Admin • SMAN 2 Sampit</div>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="content">
-
-      <!-- STATS -->
-      <div class="grid">
-        <div class="card">
-          <h3>Total Siswa</h3>
-          <div class="num">1.247</div>
-        </div>
-
-        <div class="card">
-          <h3>Total Guru</h3>
-          <div class="num">68</div>
-        </div>
-
-        <div class="card">
-          <h3>Kelas Aktif</h3>
-          <div class="num">36</div>
-        </div>
-
-        <div class="card">
-          <h3>Absensi Hari Ini</h3>
-          <div class="num">96%</div>
-        </div>
-      </div>
-
-      <!-- TABLE -->
-      <div class="table">
-        <table width="100%">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Kelas</th>
-              <th>Status</th>
-              <th>Waktu</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Ahmad Rizki</td>
-              <td>XII IPA 1</td>
-              <td>Hadir</td>
-              <td>07:12</td>
-            </tr>
-            <tr>
-              <td>Siti Rahayu</td>
-              <td>XII IPA 2</td>
-              <td>Terlambat</td>
-              <td>07:35</td>
-            </tr>
-            <tr>
-              <td>Budi Kurniawan</td>
-              <td>XI IPS 2</td>
-              <td>Izin</td>
-              <td>08:00</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-
-  </main>
+  <div class="nav-item" onclick="setNav(this)">
+    <span class="nav-ico">⏱️</span> Alokasi Waktu
+  </div>
 </div>
 
-</body>
-</html>
+<!-- LAYANAN SISWA (1 GROUP SAJA) -->
+<div class="nav-group">
+  <div class="nav-group-label">Layanan Siswa</div>
+
+  <a class="nav-item" href="pages/bk.html">
+    <span class="nav-ico">💙</span> Layanan BK
+  </a>
+
+  <a class="nav-item" href="pages/pembinaansiswa.html">
+    <span class="nav-ico">⚠️</span> Pembinaan BK
+  </a>
+
+  <div class="nav-item" onclick="setNav(this)">
+    <span class="nav-ico">👩‍🏫</span> Pembinaan Wali
+  </div>
+</div>
