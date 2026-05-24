@@ -1,37 +1,71 @@
-<div class="nav-group">
-  <div class="nav-group-label">KBM & Izin</div>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login SIM Sekolah</title>
+<style>
+body{
+  font-family:Arial;
+  background:#0b1f4a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.box{
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  width:300px;
+}
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+}
+button{
+  background:#1e6fff;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
 
-  <a class="nav-item" href="pages/izinsiswa.html">
-    <span class="nav-ico">📊</span> Rekap KBM
-  </a>
+<div class="box">
+  <h3>Login SIM Sekolah</h3>
 
-  <div class="nav-item" onclick="setNav(this)">
-    <span class="nav-ico">📝</span> Izin Siswa
-    <span class="nav-badge warn">3</span>
-  </div>
+  <select id="role">
+    <option value="admin">Admin</option>
+    <option value="guru">Guru</option>
+    <option value="siswa">Siswa</option>
+  </select>
 
-  <div class="nav-item" onclick="setNav(this)">
-    <span class="nav-ico">🗂️</span> Surat Izin
-  </div>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
 
-  <div class="nav-item" onclick="setNav(this)">
-    <span class="nav-ico">⏱️</span> Alokasi Waktu
-  </div>
+  <button onclick="login()">Login</button>
 </div>
 
-<!-- LAYANAN SISWA (1 GROUP SAJA) -->
-<div class="nav-group">
-  <div class="nav-group-label">Layanan Siswa</div>
+<script type="module">
+import { auth } from './assets/js/firebase.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  <a class="nav-item" href="pages/bk.html">
-    <span class="nav-ico">💙</span> Layanan BK
-  </a>
+window.login = function(){
+  const email = document.getElementById("email").value;
+  const pass  = document.getElementById("password").value;
+  const role  = document.getElementById("role").value;
 
-  <a class="nav-item" href="pages/pembinaansiswa.html">
-    <span class="nav-ico">⚠️</span> Pembinaan BK
-  </a>
+  signInWithEmailAndPassword(auth, email, pass)
+    .then((user)=>{
+      localStorage.setItem("role", role);
+      window.location.href="dashboard.html";
+    })
+    .catch(err=>{
+      alert("Login gagal");
+    });
+}
+</script>
 
-  <div class="nav-item" onclick="setNav(this)">
-    <span class="nav-ico">👩‍🏫</span> Pembinaan Wali
-  </div>
-</div>
+</body>
+</html>
